@@ -9,10 +9,10 @@
     @font-face {
       font-family: 'LutherHeavy';
       src: url('https://drive.usercontent.google.com/u/1/uc?id=1gCci3TWQ2yIAT347lpq7EEdyf4nOzDMM&export=download') format('truetype');
-      font-weight: 900;
-      font-style: normal;
+      font-weight: 900; font-style: normal;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }       /* native smooth scroll */
     body, html { height: 100%; overflow-x: hidden; }
 
     /* Header */
@@ -33,6 +33,7 @@
     }
 
     /* Products */
+    #productSection { scroll-margin-top: 60px; }  /* offset for fixed header */
     .product-image { width: 215.23px; height: 286.47px; position: relative; overflow: hidden; }
     .product-image img { position: absolute; max-width: 100%; width: 100%; height: auto; top: 0; left: 0; object-fit: cover; transition: opacity .3s ease; }
     .product-image .back { opacity: 0; }
@@ -45,24 +46,20 @@
     .wishlist-popup {
       position: fixed; inset: 0;
       display: none; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.35);              /* semi-transparent for backdrop blur to show */
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       opacity: 0; visibility: hidden; transform: scale(.98);
       transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
-      z-index: 2000; /* over everything */
+      z-index: 2000;
     }
     .wishlist-popup.show { opacity: 1; visibility: visible; transform: scale(1); }
 
-    /* Wishlist inner card (keeps texture crisp) */
     .wishlist-card {
       width: 100%; max-width: 420px;
       background: rgba(255,255,255,0.06) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') center/cover no-repeat;
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 10px;
-      padding: 24px 20px;
-      color: white;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      padding: 24px 20px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
 
     /* Mobile menu */
@@ -71,23 +68,11 @@
     .hamburger span:nth-child(3) { display: none; }
 
     .mobile-menu {
-      display: none;
-      position: fixed;
-      top: 50px;                /* below the header */
-      left: 0;
-      width: 100%;
-      height: calc(100% - 50px);
+      display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px);
       background: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') center/cover no-repeat;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      padding-top: 20px;        /* space under header */
-      z-index: 1000;            /* under header (1001) */
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-100%);
-      transition: opacity .4s, transform .4s, visibility .4s;
-      justify-content: flex-start; /* links start under header */
+      flex-direction: column; align-items: center; gap: 20px; padding-top: 20px;
+      z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-100%);
+      transition: opacity .4s, transform .4s, visibility .4s; justify-content: flex-start;
     }
     .mobile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
@@ -106,7 +91,7 @@
     <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px; color: white; font-size: .8rem; font-weight: 300; text-transform: uppercase; text-decoration: none;">Instagram</a>
     <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;" src="https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png" alt="Luther Logo">
     <div class="nav-links">
-      <a href="#" id="productsBtn">Products</a>
+      <a href="#productSection" id="productsBtn">Products</a>
       <a href="#" id="wishlistBtn">Wishlist</a>
     </div>
     <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -117,7 +102,7 @@
   <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
     <a href="https://www.instagram.com/lutherclo/" target="_blank" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Instagram</a>
-    <a href="#" id="mobileProductsBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Products</a>
+    <a href="#productSection" id="mobileProductsBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Products</a>
     <a href="#" id="mobileWishlistBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Wishlist</a>
   </nav>
 
@@ -201,7 +186,6 @@
 
   <script>
     // Elements
-    const productBtn = document.getElementById('productsBtn');
     const wishlistBtn = document.getElementById('wishlistBtn');
     const wishlistTrigger = document.getElementById('wishlistTrigger');
     const wishlistPopup = document.getElementById('wishlistPopup');
@@ -214,8 +198,7 @@
     const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
     const heroSection = document.querySelector('.hero');
 
-    /* ------------ Helpers ------------ */
-    const HEADER_H = 50;
+    /* Header theming over hero */
     function setHeaderState(isTransparent) {
       if (isTransparent) {
         header.style.backgroundColor = 'transparent';
@@ -229,14 +212,11 @@
         document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'black');
       }
     }
-    function smoothScrollToEl(el) {
-      if (!el) return;
-      const y = el.getBoundingClientRect().top + window.pageYOffset - HEADER_H;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
 
-    /* ------------ Wishlist ------------ */
+    /* Wishlist open/close */
     function openWishlist() {
+      // close mobile menu if open so it doesn't sit on top
+      closeMobileMenu();
       wishlistPopup.style.display = 'flex';
       requestAnimationFrame(() => wishlistPopup.classList.add('show'));
     }
@@ -249,7 +229,7 @@
     wishlistClose && wishlistClose.addEventListener('click', closeWishlist);
     wishlistPopup.addEventListener('click', (e) => { if (e.target === wishlistPopup) closeWishlist(); });
 
-    /* ------------ Mobile menu ------------ */
+    /* Mobile menu */
     function openMobileMenu() {
       hamburger.classList.add('active');
       hamburger.setAttribute('aria-expanded', 'true');
@@ -260,40 +240,37 @@
       hamburger.classList.remove('active');
       hamburger.setAttribute('aria-expanded', 'false');
       mobileMenu.classList.remove('show');
-      setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+      setTimeout(() => { mobileMenu.style.display = 'none'; }, 300);
     }
     hamburger.addEventListener('click', () => {
       if (hamburger.classList.contains('active')) closeMobileMenu(); else openMobileMenu();
     });
 
-    // Mobile links
+    // Mobile: close menu, then let anchor navigate/scroll
     mobileProductsBtn && mobileProductsBtn.addEventListener('click', (e) => {
       e.preventDefault();
       closeMobileMenu();
-      setTimeout(() => smoothScrollToEl(document.getElementById('productSection')), 10);
+      // ensure scroll after menu animation finishes
+      const target = document.getElementById('productSection');
+      setTimeout(() => target && target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 320);
     });
     mobileWishlistBtn && mobileWishlistBtn.addEventListener('click', (e) => {
       e.preventDefault();
       closeMobileMenu();
-      setTimeout(() => openWishlist(), 300); // open after menu closes
+      setTimeout(() => openWishlist(), 320);
     });
 
-    /* ------------ Desktop nav actions ------------ */
-    productBtn && productBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      smoothScrollToEl(document.getElementById('productSection'));
-    });
-
+    // Logo to top
     headerLogo.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setHeaderState(true);
     });
 
-    // IntersectionObserver to theme header over hero
+    // Theme header based on hero visibility
     const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
     observer.observe(heroSection);
 
-    // Drag-to-scroll on product row
+    // Drag-to-scroll product row
     const productScroll = document.getElementById('productScroll');
     if (productScroll) {
       let isDown = false, startX, scrollLeft;
@@ -308,7 +285,7 @@
       });
     }
 
-    // ---------- CORS-safe submission (URL-encoded to avoid preflight) ----------
+    // Submit wishlist (CORS-safe)
     function submitWishlistForm(form) {
       const fd = new FormData(form);
       const body = new URLSearchParams({
