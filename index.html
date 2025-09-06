@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LUTHER - Landing Page</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Anton&display=swap" rel="stylesheet">
   <style>
@@ -14,23 +14,60 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
     body, html { height: 100%; overflow-x: hidden; }
-    header { position: fixed; top: 0; width: 100%; height: 50px; padding: 0 40px; display: flex; justify-content: center; align-items: center; z-index: 1001; background-color: transparent; transition: background-color 0.3s ease; }
+
+    /* Header */
+    header {
+      position: fixed; top: 0; width: 100%; height: 50px;
+      padding: 0 40px; display: flex; justify-content: center; align-items: center;
+      z-index: 1001; background-color: transparent; transition: background-color .3s ease;
+    }
     .nav-links { position: absolute; right: 40px; display: flex; gap: 16px; }
-    header a { text-decoration: none; color: white; font-weight: 300; text-transform: uppercase; font-size: 0.8rem; position: relative; }
-    .logo-center { height: 40px; transition: opacity 0.3s ease; }
-    .hero { background: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center center/cover; height: 100vh; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 50px; color: white; text-align: center; }
+    header a { text-decoration: none; color: white; font-weight: 300; text-transform: uppercase; font-size: .8rem; position: relative; }
+    .logo-center { height: 40px; transition: opacity .3s ease; cursor: pointer; }
+
+    /* Hero */
+    .hero {
+      background: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center center/cover;
+      height: 100vh; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      min-height: 50px; color: white; text-align: center;
+    }
+
+    /* Products */
     .product-image { width: 215.23px; height: 286.47px; position: relative; overflow: hidden; }
-    .product-image img { position: absolute; max-width: 100%; width: 100%; height: auto; top: 0; left: 0; object-fit: cover; transition: opacity 0.3s ease; }
+    .product-image img { position: absolute; max-width: 100%; width: 100%; height: auto; top: 0; left: 0; object-fit: cover; transition: opacity .3s ease; }
     .product-image .back { opacity: 0; }
     .product-image:hover .front { opacity: 0; }
     .product-image:hover .back { opacity: 1; }
     .product-scroll { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; }
     .product-scroll::-webkit-scrollbar { display: none; }
-    .wishlist-popup { opacity: 0; visibility: hidden; transform: scale(0.95); transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s; background: rgba(255, 255, 255, 0.05) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center/cover; backdrop-filter: blur(8px); }
+
+    /* Wishlist popup */
+    .wishlist-popup {
+      opacity: 0; visibility: hidden; transform: scale(.95);
+      transition: opacity .4s ease, transform .4s ease, visibility .4s;
+      background: rgba(255,255,255,.05) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center/cover;
+      backdrop-filter: blur(8px);
+    }
     .wishlist-popup.show { opacity: 1; visibility: visible; transform: scale(1); }
+
+    /* Mobile menu */
     .hamburger { display: none; flex-direction: column; justify-content: center; width: 30px; height: 25px; cursor: pointer; position: absolute; right: 20px; gap: 4px; z-index: 1002; }
-    .hamburger span { background: white; height: 1px; width: 100%; transition: all 0.3s ease; }
+    .hamburger span { background: white; height: 1px; width: 100%; transition: all .3s ease; }
     .hamburger span:nth-child(3) { display: none; }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') center/cover no-repeat;
+      flex-direction: column; justify-content: center; align-items: center; gap: 30px;
+      z-index: 1003; opacity: 0; visibility: hidden; transform: translateY(-100%);
+      transition: opacity .4s, transform .4s, visibility .4s;
+    }
+    .mobile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+    /* Prevent background scroll while menu open */
+    body.menu-open { overflow: hidden; }
+
+    /* Responsive */
     @media (max-width: 768px) {
       header { padding: 0 20px; z-index: 1001; }
       .instagram-link { display: none; }
@@ -42,99 +79,99 @@
 </head>
 <body>
   <header id="header" style="background-color: transparent; backdrop-filter: none;">
-    <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px; color: white; font-size: 0.8rem; font-weight: 300; text-transform: uppercase; text-decoration: none;">Instagram</a>
-    <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px; cursor: pointer;" src="https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png" alt="Luther Logo">
+    <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px; color: white; font-size: .8rem; font-weight: 300; text-transform: uppercase; text-decoration: none;">Instagram</a>
+    <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;" src="https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png" alt="Luther Logo">
     <div class="nav-links">
       <a href="#" id="productsBtn">Products</a>
       <a href="#" id="wishlistBtn">Wishlist</a>
     </div>
-    <div class="hamburger" id="hamburger">
+    <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
     </div>
   </header>
 
-  <div class="mobile-menu" id="mobileMenu" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') center/cover no-repeat; flex-direction:column; justify-content:center; align-items:center; gap:30px; z-index:999; opacity:0; visibility:hidden; transform:translateY(-100%); transition:opacity .4s, transform .4s, visibility .4s;">
-    <a href="https://www.instagram.com/lutherclo/" target="_blank" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; position:relative; z-index:1; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Instagram</a>
-    <a href="#" id="mobileProductsBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; position:relative; z-index:1; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Products</a>
-    <a href="#" id="mobileWishlistBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; position:relative; z-index:1; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Wishlist</a>
-  </div>
+  <!-- MOBILE MENU -->
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="https://www.instagram.com/lutherclo/" target="_blank" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Instagram</a>
+    <a href="#" id="mobileProductsBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Products</a>
+    <a href="#" id="mobileWishlistBtn" style="color:white; text-decoration:none; font-size:1.2rem; text-transform:uppercase; font-weight:300; padding:10px; text-shadow:0 0 5px rgba(0,0,0,.5)">Wishlist</a>
+  </nav>
 
   <div class="hero">
-    <h1 style="font-size: 3rem; font-weight: 900; font-family: 'LutherHeavy', sans-serif;">LUTHER ESSENTIALS<sup style="font-size: 0.6em; vertical-align: super;">®</sup></h1>
+    <h1 style="font-size: 3rem; font-weight: 900; font-family: 'LutherHeavy', sans-serif;">LUTHER ESSENTIALS<sup style="font-size:.6em; vertical-align: super;">®</sup></h1>
     <p style="margin-top: 10px; font-size: 1.6rem; font-weight: 300; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">DROP 01 PRIORITY ACCESS</p>
     <p style="margin-top: 20px; font-size: 1rem; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
-    <button id="wishlistTrigger" style="margin-top: 20px; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Join the Wishlist</button>
+    <button id="wishlistTrigger" style="margin-top: 20px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Join the Wishlist</button>
   </div>
 
   <section id="productSection" style="padding: 80px 40px 40px; background-color: #FAF9F6;">
-    <h2 style="font-size: 0.75rem; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px;">Luther Essentials</h2>
+    <h2 style="font-size:.75rem; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px;">Luther Essentials</h2>
     <div class="product-scroll" id="productScroll">
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieFront.png" alt="Onyx Black Hoodie" class="front">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieBack.png" alt="Onyx Black Hoodie Back" class="back">
         </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Onyx Black Hoodie</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
+        <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
+        <p style="font-size:.85rem; margin: 3px 0;">Onyx Black Hoodie</p>
+        <p style="font-size:.9rem;">Coming Soon</p>
       </div>
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieFront.png" alt="Root Brown Hoodie" class="front">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieBack.png" alt="Root Brown Hoodie Back" class="back">
         </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Root Brown Hoodie</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
+        <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
+        <p style="font-size:.85rem; margin: 3px 0;">Root Brown Hoodie</p>
+        <p style="font-size:.9rem;">Coming Soon</p>
       </div>
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeFront.png" alt="Onyx Black Tee" class="front">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeBack.png" alt="Onyx Black Tee Back" class="back">
         </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Onyx Black Tee</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
+        <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
+        <p style="font-size:.85rem; margin: 3px 0;">Onyx Black Tee</p>
+        <p style="font-size:.9rem;">Coming Soon</p>
       </div>
       <div style="min-width: 300px; text-align: left;">
         <div class="product-image">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeFront.png" alt="Bone Tee" class="front">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeBack.png" alt="Bone Tee Back" class="back">
         </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Bone Tee</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
+        <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
+        <p style="font-size:.85rem; margin: 3px 0;">Bone Tee</p>
+        <p style="font-size:.9rem;">Coming Soon</p>
       </div>
     </div>
   </section>
 
   <div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
     <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
-      <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: 0.8rem; color: white;">The Wishlist</h2>
-      <p style="margin-bottom: 20px; font-size: 0.8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
-      <input type="text" name="firstName" placeholder="First Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 8px; color: white; width: 100%; font-size: 0.8rem; font-weight: 300;">
-      <input type="text" name="lastName" placeholder="Last Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 5px; color: white; width: 100%; font-size: 0.8rem; font-weight: 300;">
-      <input type="email" name="email" placeholder="Email Address" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: 0.8rem; font-weight: 300;">
-      <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: 0.8rem; font-weight: 300;">
+      <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
+      <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
+      <input type="text" name="firstName" placeholder="First Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 8px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="text" name="lastName" placeholder="Last Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 5px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="email" name="email" placeholder="Email Address" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
       <div style="display: flex; width: 100%; gap: 10px;">
-        <button type="submit" style="width: 75%; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
-        <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="width: 25%; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+        <button type="submit" style="width: 75%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
+        <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="width: 25%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
       </div>
-      <p style="font-size: 0.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
+      <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
     </form>
-    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: 0.9rem; max-width: 400px; padding: 0 20px;">
+    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
       <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
       <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
-      <p style="font-size: 0.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
+      <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
     </div>
   </div>
 
   <script>
-    // UI controls (unchanged core behavior)
+    // Elements
     const productBtn = document.getElementById('productsBtn');
     const wishlistBtn = document.getElementById('wishlistBtn');
     const wishlistTrigger = document.getElementById('wishlistTrigger');
-    const productGrid = document.getElementById('productGrid');
     const wishlistPopup = document.getElementById('wishlistPopup');
     const header = document.getElementById('header');
     const headerLogo = document.getElementById('headerLogo');
@@ -144,12 +181,7 @@
     const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
     const heroSection = document.querySelector('.hero');
 
-    headerLogo.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setHeaderState(true); });
-    productBtn && productBtn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' }); wishlistPopup.style.display = 'none'; });
-    const openWishlist = () => { wishlistPopup.style.display = 'flex'; requestAnimationFrame(() => wishlistPopup.classList.add('show')); if(productGrid) productGrid.style.display = 'none'; };
-    wishlistBtn && wishlistBtn.addEventListener('click', openWishlist);
-    wishlistTrigger && wishlistTrigger.addEventListener('click', openWishlist);
-
+    // Header theme toggle
     function setHeaderState(isTransparent) {
       if (isTransparent) {
         header.style.backgroundColor = 'transparent';
@@ -164,21 +196,72 @@
       }
     }
 
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      if (hamburger.classList.contains('active')) {
-        mobileMenu.style.display = 'flex'; requestAnimationFrame(() => mobileMenu.classList.add('show'));
-      } else {
-        mobileMenu.classList.remove('show'); setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
-      }
+    // Open/close wishlist
+    function openWishlist() {
+      wishlistPopup.style.display = 'flex';
+      requestAnimationFrame(() => wishlistPopup.classList.add('show'));
+    }
+
+    // Scroll & clicks (desktop)
+    headerLogo.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setHeaderState(true); });
+    productBtn && productBtn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' }); wishlistPopup.style.display = 'none'; });
+    wishlistBtn && wishlistBtn.addEventListener('click', (e)=>{ e.preventDefault(); openWishlist(); });
+    wishlistTrigger && wishlistTrigger.addEventListener('click', openWishlist);
+
+    // IntersectionObserver to theme header over hero
+    const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
+    observer.observe(heroSection);
+
+    // Mobile menu helpers
+    function isHeroMostlyVisible() {
       const heroRect = heroSection.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const intersectionHeight = Math.min(heroRect.bottom, viewportHeight) - Math.max(heroRect.top, 0);
       const intersectionRatio = intersectionHeight / heroRect.height;
-      const isHeroVisible = intersectionRatio >= 0.5;
-      setHeaderState(isHeroVisible);
+      return intersectionRatio >= 0.5;
+    }
+
+    function openMobileMenu() {
+      hamburger.classList.add('active');
+      hamburger.setAttribute('aria-expanded', 'true');
+      mobileMenu.style.display = 'flex';
+      document.body.classList.add('menu-open');
+      requestAnimationFrame(() => mobileMenu.classList.add('show'));
+      setHeaderState(isHeroMostlyVisible());
+    }
+
+    function closeMobileMenu() {
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      mobileMenu.classList.remove('show');
+      document.body.classList.remove('menu-open');
+      setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+      setHeaderState(isHeroMostlyVisible());
+    }
+
+    // Hamburger toggle
+    hamburger.addEventListener('click', () => {
+      if (hamburger.classList.contains('active')) {
+        closeMobileMenu();
+      } else {
+        openMobileMenu();
+      }
     });
 
+    // Mobile menu link actions (close + navigate)
+    mobileProductsBtn && mobileProductsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileMenu();
+      document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    mobileWishlistBtn && mobileWishlistBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileMenu();
+      openWishlist();
+    });
+
+    // Drag-to-scroll on product row
     const productScroll = document.getElementById('productScroll');
     if (productScroll) {
       let isDown = false, startX, scrollLeft;
@@ -193,9 +276,6 @@
       });
     }
 
-    const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
-    observer.observe(heroSection);
-
     // ---------- CORS-safe submission (URL-encoded to avoid preflight) ----------
     function submitWishlistForm(form) {
       const fd = new FormData(form);
@@ -205,7 +285,6 @@
         email:     fd.get('email'),
         phone:     fd.get('phone')
       });
-
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
 
       fetch(WEB_APP_URL, {
@@ -227,11 +306,11 @@
         alert('Error submitting form.');
       });
     }
+    window.submitWishlistForm = submitWishlistForm; // expose for inline onsubmit
   </script>
 
-  <footer style="text-align: center; padding: 40px 20px; font-size: 0.75rem; font-weight: 300; text-transform: uppercase; color: #999; background: #faf9f6;">
-    © LUTHER CLOTHING LIMITED<br>
-    EST.2025
+  <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999; background:#faf9f6;">
+    © LUTHER CLOTHING LIMITED<br>EST.2025
   </footer>
 </body>
 </html>
