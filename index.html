@@ -56,16 +56,25 @@
     .hamburger span:nth-child(3) { display: none; }
 
     .mobile-menu {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: none;
+      position: fixed;
+      top: 50px;                /* below the header */
+      left: 0;
+      width: 100%;
+      height: calc(100% - 50px);
       background: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') center/cover no-repeat;
-      flex-direction: column; justify-content: center; align-items: center; gap: 30px;
-      z-index: 1003; opacity: 0; visibility: hidden; transform: translateY(-100%);
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding-top: 20px;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-100%);
       transition: opacity .4s, transform .4s, visibility .4s;
+      justify-content: flex-start; /* links start under header */
     }
     .mobile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
-
-    /* Prevent background scroll while menu open */
-    body.menu-open { overflow: hidden; }
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -107,6 +116,7 @@
   <section id="productSection" style="padding: 80px 40px 40px; background-color: #FAF9F6;">
     <h2 style="font-size:.75rem; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px;">Luther Essentials</h2>
     <div class="product-scroll" id="productScroll">
+      <!-- Products -->
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
           <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieFront.png" alt="Onyx Black Hoodie" class="front">
@@ -146,29 +156,7 @@
     </div>
   </section>
 
-  <div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
-    <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
-      <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
-      <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
-      <input type="text" name="firstName" placeholder="First Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 8px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
-      <input type="text" name="lastName" placeholder="Last Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 5px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
-      <input type="email" name="email" placeholder="Email Address" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
-      <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
-      <div style="display: flex; width: 100%; gap: 10px;">
-        <button type="submit" style="width: 75%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
-        <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="width: 25%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
-      </div>
-      <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
-    </form>
-    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
-      <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
-      <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
-      <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
-    </div>
-  </div>
-
   <script>
-    // Elements
     const productBtn = document.getElementById('productsBtn');
     const wishlistBtn = document.getElementById('wishlistBtn');
     const wishlistTrigger = document.getElementById('wishlistTrigger');
@@ -181,7 +169,6 @@
     const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
     const heroSection = document.querySelector('.hero');
 
-    // Header theme toggle
     function setHeaderState(isTransparent) {
       if (isTransparent) {
         header.style.backgroundColor = 'transparent';
@@ -196,117 +183,36 @@
       }
     }
 
-    // Open/close wishlist
-    function openWishlist() {
-      wishlistPopup.style.display = 'flex';
-      requestAnimationFrame(() => wishlistPopup.classList.add('show'));
-    }
-
-    // Scroll & clicks (desktop)
-    headerLogo.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setHeaderState(true); });
-    productBtn && productBtn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' }); wishlistPopup.style.display = 'none'; });
-    wishlistBtn && wishlistBtn.addEventListener('click', (e)=>{ e.preventDefault(); openWishlist(); });
-    wishlistTrigger && wishlistTrigger.addEventListener('click', openWishlist);
-
-    // IntersectionObserver to theme header over hero
-    const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
-    observer.observe(heroSection);
-
-    // Mobile menu helpers
-    function isHeroMostlyVisible() {
-      const heroRect = heroSection.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const intersectionHeight = Math.min(heroRect.bottom, viewportHeight) - Math.max(heroRect.top, 0);
-      const intersectionRatio = intersectionHeight / heroRect.height;
-      return intersectionRatio >= 0.5;
-    }
-
-    function openMobileMenu() {
-      hamburger.classList.add('active');
-      hamburger.setAttribute('aria-expanded', 'true');
-      mobileMenu.style.display = 'flex';
-      document.body.classList.add('menu-open');
-      requestAnimationFrame(() => mobileMenu.classList.add('show'));
-      setHeaderState(isHeroMostlyVisible());
-    }
-
-    function closeMobileMenu() {
-      hamburger.classList.remove('active');
-      hamburger.setAttribute('aria-expanded', 'false');
-      mobileMenu.classList.remove('show');
-      document.body.classList.remove('menu-open');
-      setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
-      setHeaderState(isHeroMostlyVisible());
-    }
-
     // Hamburger toggle
     hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
       if (hamburger.classList.contains('active')) {
-        closeMobileMenu();
+        mobileMenu.style.display = 'flex';
+        requestAnimationFrame(() => mobileMenu.classList.add('show'));
       } else {
-        openMobileMenu();
+        mobileMenu.classList.remove('show');
+        setTimeout(() => mobileMenu.style.display = 'none', 400);
       }
     });
 
-    // Mobile menu link actions (close + navigate)
+    // Mobile menu links
     mobileProductsBtn && mobileProductsBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      closeMobileMenu();
+      mobileMenu.classList.remove('show');
+      setTimeout(() => mobileMenu.style.display = 'none', 400);
       document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' });
     });
 
     mobileWishlistBtn && mobileWishlistBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      closeMobileMenu();
-      openWishlist();
+      mobileMenu.classList.remove('show');
+      setTimeout(() => mobileMenu.style.display = 'none', 400);
+      alert('Wishlist popup would open here.');
     });
 
-    // Drag-to-scroll on product row
-    const productScroll = document.getElementById('productScroll');
-    if (productScroll) {
-      let isDown = false, startX, scrollLeft;
-      productScroll.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - productScroll.offsetLeft; scrollLeft = productScroll.scrollLeft; });
-      productScroll.addEventListener('mouseleave', () => { isDown = false; });
-      productScroll.addEventListener('mouseup', () => { isDown = false; });
-      productScroll.addEventListener('mousemove', (e) => {
-        if (!isDown) return; e.preventDefault();
-        const x = e.pageX - productScroll.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        productScroll.scrollLeft = scrollLeft - walk;
-      });
-    }
-
-    // ---------- CORS-safe submission (URL-encoded to avoid preflight) ----------
-    function submitWishlistForm(form) {
-      const fd = new FormData(form);
-      const body = new URLSearchParams({
-        firstName: fd.get('firstName'),
-        lastName:  fd.get('lastName'),
-        email:     fd.get('email'),
-        phone:     fd.get('phone')
-      });
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
-
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-      })
-      .then(r => r.json())
-      .then(result => {
-        if (result.status === 'success') {
-          document.getElementById('confirmationMessage').style.display = 'block';
-          form.style.display = 'none';
-        } else {
-          alert('Error: ' + result.message);
-        }
-      })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        alert('Error submitting form.');
-      });
-    }
-    window.submitWishlistForm = submitWishlistForm; // expose for inline onsubmit
+    // IntersectionObserver for header
+    const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
+    observer.observe(heroSection);
   </script>
 
   <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999; background:#faf9f6;">
