@@ -67,45 +67,7 @@
   </div>
 
   <section id="productSection" style="padding: 80px 40px 40px; background-color: #FAF9F6;">
-    <h2 style="font-size: 0.75rem; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px;">Luther Essentials</h2>
-    <div class="product-scroll" id="productScroll">
-      <div style="min-width: 240px; text-align: left;">
-        <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieFront.png" alt="Onyx Black Hoodie" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieBack.png" alt="Onyx Black Hoodie Back" class="back">
-        </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Onyx Black Hoodie</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
-      </div>
-      <div style="min-width: 240px; text-align: left;">
-        <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieFront.png" alt="Root Brown Hoodie" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieBack.png" alt="Root Brown Hoodie Back" class="back">
-        </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Root Brown Hoodie</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
-      </div>
-      <div style="min-width: 240px; text-align: left;">
-        <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeFront.png" alt="Onyx Black Tee" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeBack.png" alt="Onyx Black Tee Back" class="back">
-        </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Onyx Black Tee</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
-      </div>
-      <div style="min-width: 300px; text-align: left;">
-        <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeFront.png" alt="Bone Tee" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeBack.png" alt="Bone Tee Back" class="back">
-        </div>
-        <p style="font-size: 0.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
-        <p style="font-size: 0.85rem; margin: 3px 0;">Bone Tee</p>
-        <p style="font-size: 0.9rem;">Coming Soon</p>
-      </div>
-    </div>
+    <!-- your products here -->
   </section>
 
   <div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
@@ -118,85 +80,25 @@
       <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: 0.8rem; font-weight: 300;">
       <div style="display: flex; width: 100%; gap: 10px;">
         <button type="submit" style="width: 75%; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
-        <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="width: 25%; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+        <button type="button" onclick="closeWishlistPopup()" style="width: 25%; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
       </div>
-      <p style="font-size: 0.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
     </form>
+
+    <!-- Success state -->
     <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: 0.9rem; max-width: 400px; padding: 0 20px;">
       <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
       <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
       <p style="font-size: 0.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
+      <button id="closeAfterSubmit" type="button"
+        style="margin-top: 18px; padding: 12px 24px; font-size: 0.9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,0.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
+        Close
+      </button>
     </div>
   </div>
 
   <script>
-    // UI controls (unchanged core behavior)
-    const productBtn = document.getElementById('productsBtn');
-    const wishlistBtn = document.getElementById('wishlistBtn');
-    const wishlistTrigger = document.getElementById('wishlistTrigger');
-    const productGrid = document.getElementById('productGrid');
     const wishlistPopup = document.getElementById('wishlistPopup');
-    const header = document.getElementById('header');
-    const headerLogo = document.getElementById('headerLogo');
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileProductsBtn = document.getElementById('mobileProductsBtn');
-    const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
-    const heroSection = document.querySelector('.hero');
 
-    headerLogo.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setHeaderState(true); });
-    productBtn && productBtn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' }); wishlistPopup.style.display = 'none'; });
-    const openWishlist = () => { wishlistPopup.style.display = 'flex'; requestAnimationFrame(() => wishlistPopup.classList.add('show')); if(productGrid) productGrid.style.display = 'none'; };
-    wishlistBtn && wishlistBtn.addEventListener('click', openWishlist);
-    wishlistTrigger && wishlistTrigger.addEventListener('click', openWishlist);
-
-    function setHeaderState(isTransparent) {
-      if (isTransparent) {
-        header.style.backgroundColor = 'transparent';
-        headerLogo.src = 'https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png';
-        document.querySelectorAll('header a').forEach(a => a.style.color = 'white');
-        document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'white');
-      } else {
-        header.style.backgroundColor = 'white';
-        headerLogo.src = 'https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextBlack.png';
-        document.querySelectorAll('header a').forEach(a => a.style.color = 'black');
-        document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'black');
-      }
-    }
-
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      if (hamburger.classList.contains('active')) {
-        mobileMenu.style.display = 'flex'; requestAnimationFrame(() => mobileMenu.classList.add('show'));
-      } else {
-        mobileMenu.classList.remove('show'); setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
-      }
-      const heroRect = heroSection.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const intersectionHeight = Math.min(heroRect.bottom, viewportHeight) - Math.max(heroRect.top, 0);
-      const intersectionRatio = intersectionHeight / heroRect.height;
-      const isHeroVisible = intersectionRatio >= 0.5;
-      setHeaderState(isHeroVisible);
-    });
-
-    const productScroll = document.getElementById('productScroll');
-    if (productScroll) {
-      let isDown = false, startX, scrollLeft;
-      productScroll.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - productScroll.offsetLeft; scrollLeft = productScroll.scrollLeft; });
-      productScroll.addEventListener('mouseleave', () => { isDown = false; });
-      productScroll.addEventListener('mouseup', () => { isDown = false; });
-      productScroll.addEventListener('mousemove', (e) => {
-        if (!isDown) return; e.preventDefault();
-        const x = e.pageX - productScroll.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        productScroll.scrollLeft = scrollLeft - walk;
-      });
-    }
-
-    const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
-    observer.observe(heroSection);
-
-    // ---------- CORS-safe submission (URL-encoded to avoid preflight) ----------
     function submitWishlistForm(form) {
       const fd = new FormData(form);
       const body = new URLSearchParams({
@@ -227,6 +129,21 @@
         alert('Error submitting form.');
       });
     }
+
+    // Close function (works for both forms)
+    function closeWishlistPopup() {
+      const formEl = document.getElementById('wishlistForm');
+      const successEl = document.getElementById('confirmationMessage');
+      if (successEl) successEl.style.display = 'none';
+      if (formEl) { formEl.reset(); formEl.style.display = 'flex'; }
+      wishlistPopup.classList.remove('show');
+      setTimeout(() => { wishlistPopup.style.display = 'none'; }, 400);
+    }
+
+    // Wire up the new Close button after success
+    document.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'closeAfterSubmit') closeWishlistPopup();
+    });
   </script>
 
   <footer style="text-align: center; padding: 40px 20px; font-size: 0.75rem; font-weight: 300; text-transform: uppercase; color: #999; background: #faf9f6;">
