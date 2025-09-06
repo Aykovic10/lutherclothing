@@ -41,12 +41,15 @@
     .product-scroll { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; }
     .product-scroll::-webkit-scrollbar { display: none; }
 
-    /* Wishlist popup */
+    /* Wishlist popup (full overlay) */
     .wishlist-popup {
-      opacity: 0; visibility: hidden; transform: scale(.95);
-      transition: opacity .4s ease, transform .4s ease, visibility .4s;
-      background: rgba(255,255,255,.05) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center/cover;
+      position: fixed; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.5) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') center/cover no-repeat;
       backdrop-filter: blur(8px);
+      opacity: 0; visibility: hidden; transform: scale(.98);
+      transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
+      z-index: 2000; /* over everything */
     }
     .wishlist-popup.show { opacity: 1; visibility: visible; transform: scale(1); }
 
@@ -66,8 +69,8 @@
       flex-direction: column;
       align-items: center;
       gap: 20px;
-      padding-top: 20px;
-      z-index: 1000;
+      padding-top: 20px;        /* space under header */
+      z-index: 1000;            /* under header (1001) */
       opacity: 0;
       visibility: hidden;
       transform: translateY(-100%);
@@ -156,11 +159,35 @@
     </div>
   </section>
 
+  <!-- WISHLIST POPUP -->
+  <div class="wishlist-popup" id="wishlistPopup">
+    <form id="wishlistForm" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; width:100%; max-width:400px; padding:20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
+      <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
+      <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
+      <input type="text" name="firstName" placeholder="First Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 8px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="text" name="lastName" placeholder="Last Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 5px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="email" name="email" placeholder="Email Address" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <div style="display: flex; width: 100%; gap: 10px;">
+        <button type="submit" style="width: 75%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
+        <button type="button" id="wishlistClose" style="width: 25%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+      </div>
+      <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
+    </form>
+    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
+      <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
+      <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
+      <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
+    </div>
+  </div>
+
   <script>
+    // Elements
     const productBtn = document.getElementById('productsBtn');
     const wishlistBtn = document.getElementById('wishlistBtn');
     const wishlistTrigger = document.getElementById('wishlistTrigger');
     const wishlistPopup = document.getElementById('wishlistPopup');
+    const wishlistClose = document.getElementById('wishlistClose');
     const header = document.getElementById('header');
     const headerLogo = document.getElementById('headerLogo');
     const hamburger = document.getElementById('hamburger');
@@ -169,6 +196,7 @@
     const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
     const heroSection = document.querySelector('.hero');
 
+    // Header theme toggle
     function setHeaderState(isTransparent) {
       if (isTransparent) {
         header.style.backgroundColor = 'transparent';
@@ -183,36 +211,104 @@
       }
     }
 
-    // Hamburger toggle
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      if (hamburger.classList.contains('active')) {
-        mobileMenu.style.display = 'flex';
-        requestAnimationFrame(() => mobileMenu.classList.add('show'));
-      } else {
-        mobileMenu.classList.remove('show');
-        setTimeout(() => mobileMenu.style.display = 'none', 400);
-      }
+    // Open/close wishlist
+    function openWishlist() {
+      wishlistPopup.style.display = 'flex';
+      requestAnimationFrame(() => wishlistPopup.classList.add('show'));
+    }
+    function closeWishlist() {
+      wishlistPopup.classList.remove('show');
+      setTimeout(() => { wishlistPopup.style.display = 'none'; }, 350);
+    }
+
+    // Bind wishlist triggers
+    wishlistBtn && wishlistBtn.addEventListener('click', (e)=>{ e.preventDefault(); openWishlist(); });
+    wishlistTrigger && wishlistTrigger.addEventListener('click', openWishlist);
+    wishlistClose && wishlistClose.addEventListener('click', closeWishlist);
+    // Close wishlist on background click (optional)
+    wishlistPopup.addEventListener('click', (e) => {
+      if (e.target === wishlistPopup) closeWishlist();
     });
 
-    // Mobile menu links
+    // Hamburger toggle for mobile dropdown under header
+    function openMobileMenu() {
+      hamburger.classList.add('active');
+      hamburger.setAttribute('aria-expanded', 'true');
+      mobileMenu.style.display = 'flex';
+      requestAnimationFrame(() => mobileMenu.classList.add('show'));
+    }
+    function closeMobileMenu() {
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      mobileMenu.classList.remove('show');
+      setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+    }
+    hamburger.addEventListener('click', () => {
+      if (hamburger.classList.contains('active')) closeMobileMenu(); else openMobileMenu();
+    });
+
+    // Mobile menu links (close menu, then act)
     mobileProductsBtn && mobileProductsBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      mobileMenu.classList.remove('show');
-      setTimeout(() => mobileMenu.style.display = 'none', 400);
+      closeMobileMenu();
       document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' });
     });
-
     mobileWishlistBtn && mobileWishlistBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      mobileMenu.classList.remove('show');
-      setTimeout(() => mobileMenu.style.display = 'none', 400);
-      alert('Wishlist popup would open here.');
+      closeMobileMenu();
+      openWishlist();
     });
 
-    // IntersectionObserver for header
+    // IntersectionObserver to theme header over hero
     const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
     observer.observe(heroSection);
+
+    // Drag-to-scroll on product row
+    const productScroll = document.getElementById('productScroll');
+    if (productScroll) {
+      let isDown = false, startX, scrollLeft;
+      productScroll.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - productScroll.offsetLeft; scrollLeft = productScroll.scrollLeft; });
+      productScroll.addEventListener('mouseleave', () => { isDown = false; });
+      productScroll.addEventListener('mouseup', () => { isDown = false; });
+      productScroll.addEventListener('mousemove', (e) => {
+        if (!isDown) return; e.preventDefault();
+        const x = e.pageX - productScroll.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        productScroll.scrollLeft = scrollLeft - walk;
+      });
+    }
+
+    // ---------- CORS-safe submission (URL-encoded to avoid preflight) ----------
+    function submitWishlistForm(form) {
+      const fd = new FormData(form);
+      const body = new URLSearchParams({
+        firstName: fd.get('firstName'),
+        lastName:  fd.get('lastName'),
+        email:     fd.get('email'),
+        phone:     fd.get('phone')
+      });
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
+
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      })
+      .then(r => r.json())
+      .then(result => {
+        if (result.status === 'success') {
+          document.getElementById('confirmationMessage').style.display = 'block';
+          form.style.display = 'none';
+        } else {
+          alert('Error: ' + result.message);
+        }
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        alert('Error submitting form.');
+      });
+    }
+    window.submitWishlistForm = submitWishlistForm; // expose for inline onsubmit
   </script>
 
   <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999; background:#faf9f6;">
