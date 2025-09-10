@@ -113,14 +113,21 @@
     body.menu-open { overflow: hidden; }
 
     /* Responsive */
-    @media (max-width: 768px) {
+        @media (max-width: 768px) {
       header { padding: 0 20px; z-index: 1001; }
       .instagram-link { display: none; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
       .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 30px; z-index: 1002; }
     }
+
+    /* NEW spinner animation */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
   </style>
+
 </head>
 <body>
   <header id="header" style="background-color: transparent; backdrop-filter: none;">
@@ -205,21 +212,25 @@
       </div>
       <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
     </form>
-    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
-      <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
-      <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
-      <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
-      
-      
-      <button type="button" 
-  onclick="window.open('https://www.instagram.com/lutherclo/', '_blank')" 
-  style="margin-top: 20px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
-  Follow Our Instagram
-</button>
+<!-- NEW Loading Message -->
+<div id="loadingMessage" style="display:none; text-align:center; color:white; font-weight:300; font-size:.9rem; max-width:400px; padding:0 20px;">
+  <p style="margin-bottom:10px;">Saving your spot...</p>
+  <div style="border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; animation: spin 1s linear infinite;"></div>
+</div>
 
-      
-      <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="margin-top: 24px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
-    </div>
+<div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
+  <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
+  <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
+  <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
+
+  <button type="button" 
+    onclick="window.open('https://www.instagram.com/lutherclo/', '_blank')" 
+    style="margin-top: 20px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
+    Follow Our Instagram
+  </button>
+
+  <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="margin-top: 24px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+</div>
   </div>
 
   <script>
@@ -342,24 +353,34 @@
       });
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
 
+      // hide form, show loader
+form.style.display = 'none';
+document.getElementById('loadingMessage').style.display = 'block';
+
+
       fetch(WEB_APP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body
       })
       .then(r => r.json())
-      .then(result => {
-        if (result.status === 'success') {
-          document.getElementById('confirmationMessage').style.display = 'block';
-          form.style.display = 'none';
-        } else {
-          alert('Error: ' + result.message);
-        }
-      })
+.then(result => {
+  document.getElementById('loadingMessage').style.display = 'none'; // hide loader
+  if (result.status === 'success') {
+    document.getElementById('confirmationMessage').style.display = 'block';
+  } else {
+    alert('Error: ' + result.message);
+    form.style.display = 'flex'; // restore form if error
+  }
+})
+
       .catch(err => {
-        console.error('Fetch error:', err);
-        alert('Error submitting form.');
-      });
+  console.error('Fetch error:', err);
+  alert('Error submitting form.');
+  document.getElementById('loadingMessage').style.display = 'none';
+  form.style.display = 'flex'; // restore form on error
+});
+
     }
     window.submitWishlistForm = submitWishlistForm; // expose for inline onsubmit
   </script>
