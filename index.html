@@ -47,14 +47,25 @@
     .product-scroll { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; }
     .product-scroll::-webkit-scrollbar { display: none; }
 
-/* NEW autofill fix */
+/* Autofill fix */
+input,
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
   -webkit-text-fill-color: white !important;
+  caret-color: white;
   transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Prevent zoom on iOS */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
 }
 
 
