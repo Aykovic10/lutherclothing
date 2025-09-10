@@ -56,7 +56,13 @@
     }
     .wishlist-popup.show { opacity: 1; visibility: visible; transform: scale(1); }
 
-    /* Mobile menu — NOW MATCHES WISHLIST POPUP EXACTLY 💎 */
+    /* Loader spinner */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile menu */
     .mobile-menu {
       display: none;
       position: fixed;
@@ -78,14 +84,7 @@
       transition: opacity .4s, transform .4s, visibility .4s;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     }
-
-    .mobile-menu.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    /* Style mobile menu links to match wishlist form typography */
+    .mobile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
     .mobile-menu a {
       color: white;
       text-decoration: none;
@@ -97,7 +96,6 @@
       transition: all 0.3s ease;
       text-shadow: 0 0 5px rgba(0,0,0,.3);
     }
-
     .mobile-menu a:hover {
       color: white;
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
@@ -152,10 +150,11 @@
   <section id="productSection" style="padding: 80px 40px 40px; background-color: #FAF9F6;">
     <h2 style="font-size:.75rem; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px;">Luther Essentials</h2>
     <div class="product-scroll" id="productScroll">
+      <!-- Product Cards -->
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieFront.png" alt="Onyx Black Hoodie" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieBack.png" alt="Onyx Black Hoodie Back" class="back">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieFront.png" alt="Onyx Black Hoodie" class="front" loading="lazy">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackHoodieBack.png" alt="Onyx Black Hoodie Back" class="back" loading="lazy">
         </div>
         <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
         <p style="font-size:.85rem; margin: 3px 0;">Onyx Black Hoodie</p>
@@ -163,8 +162,8 @@
       </div>
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieFront.png" alt="Root Brown Hoodie" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieBack.png" alt="Root Brown Hoodie Back" class="back">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieFront.png" alt="Root Brown Hoodie" class="front" loading="lazy">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BrownHoodieBack.png" alt="Root Brown Hoodie Back" class="back" loading="lazy">
         </div>
         <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
         <p style="font-size:.85rem; margin: 3px 0;">Root Brown Hoodie</p>
@@ -172,8 +171,8 @@
       </div>
       <div style="min-width: 240px; text-align: left;">
         <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeFront.png" alt="Onyx Black Tee" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeBack.png" alt="Onyx Black Tee Back" class="back">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeFront.png" alt="Onyx Black Tee" class="front" loading="lazy">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BlackTeeBack.png" alt="Onyx Black Tee Back" class="back" loading="lazy">
         </div>
         <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
         <p style="font-size:.85rem; margin: 3px 0;">Onyx Black Tee</p>
@@ -181,8 +180,8 @@
       </div>
       <div style="min-width: 300px; text-align: left;">
         <div class="product-image">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeFront.png" alt="Bone Tee" class="front">
-          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeBack.png" alt="Bone Tee Back" class="back">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeFront.png" alt="Bone Tee" class="front" loading="lazy">
+          <img src="https://uploads.onecompiler.io/43vn54brk/43vquhx6g/BoneTeeBack.png" alt="Bone Tee Back" class="back" loading="lazy">
         </div>
         <p style="font-size:.75rem; text-transform: uppercase; margin-top: 10px; font-weight: 500;">ESSENTIALS</p>
         <p style="font-size:.85rem; margin: 3px 0;">Bone Tee</p>
@@ -205,167 +204,13 @@
       </div>
       <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
     </form>
-    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
-      <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
-      <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
-      <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
-      
-      
-      <button type="button" 
-  onclick="window.open('https://www.instagram.com/lutherclo/', '_blank')" 
-  style="margin-top: 20px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
-  Follow Our Instagram
-</button>
 
-      
-      <button type="button" onclick="wishlistPopup.classList.remove('show'); setTimeout(() => wishlistPopup.style.display = 'none', 400);" style="margin-top: 24px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+    <!-- Loader -->
+    <div id="loadingMessage" style="display:none; text-align:center; color:white; font-weight:300; font-size:.9rem; max-width:400px; padding:0 20px;">
+      <p style="margin-bottom:10px;">Saving your spot...</p>
+      <div style="border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; animation: spin 1s linear infinite;"></div>
     </div>
-  </div>
 
-  <script>
-    // Elements
-    const productBtn = document.getElementById('productsBtn');
-    const wishlistBtn = document.getElementById('wishlistBtn');
-    const wishlistTrigger = document.getElementById('wishlistTrigger');
-    const wishlistPopup = document.getElementById('wishlistPopup');
-    const header = document.getElementById('header');
-    const headerLogo = document.getElementById('headerLogo');
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileProductsBtn = document.getElementById('mobileProductsBtn');
-    const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
-    const heroSection = document.querySelector('.hero');
-
-    // Header theme toggle
-    function setHeaderState(isTransparent) {
-      if (isTransparent) {
-        header.style.backgroundColor = 'transparent';
-        headerLogo.src = 'https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png';
-        document.querySelectorAll('header a').forEach(a => a.style.color = 'white');
-        document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'white');
-      } else {
-        header.style.backgroundColor = 'white';
-        headerLogo.src = 'https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextBlack.png';
-        document.querySelectorAll('header a').forEach(a => a.style.color = 'black');
-        document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'black');
-      }
-    }
-
-    // Open/close wishlist
-    function openWishlist() {
-      wishlistPopup.style.display = 'flex';
-      requestAnimationFrame(() => wishlistPopup.classList.add('show'));
-    }
-
-    // Scroll & clicks (desktop)
-    headerLogo.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setHeaderState(true); });
-    productBtn && productBtn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' }); wishlistPopup.style.display = 'none'; });
-    wishlistBtn && wishlistBtn.addEventListener('click', (e)=>{ e.preventDefault(); openWishlist(); });
-    wishlistTrigger && wishlistTrigger.addEventListener('click', openWishlist);
-
-    // IntersectionObserver to theme header over hero
-    const observer = new IntersectionObserver(([entry]) => { setHeaderState(entry.isIntersecting); }, { threshold: 0.5 });
-    observer.observe(heroSection);
-
-    // Mobile menu helpers
-    function isHeroMostlyVisible() {
-      const heroRect = heroSection.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const intersectionHeight = Math.min(heroRect.bottom, viewportHeight) - Math.max(heroRect.top, 0);
-      const intersectionRatio = intersectionHeight / heroRect.height;
-      return intersectionRatio >= 0.5;
-    }
-
-    function openMobileMenu() {
-      hamburger.classList.add('active');
-      hamburger.setAttribute('aria-expanded', 'true');
-      mobileMenu.style.display = 'flex';
-      document.body.classList.add('menu-open');
-      requestAnimationFrame(() => mobileMenu.classList.add('show'));
-      setHeaderState(isHeroMostlyVisible());
-    }
-
-    function closeMobileMenu() {
-      hamburger.classList.remove('active');
-      hamburger.setAttribute('aria-expanded', 'false');
-      mobileMenu.classList.remove('show');
-      document.body.classList.remove('menu-open');
-      setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
-      setHeaderState(isHeroMostlyVisible());
-    }
-
-    // Hamburger toggle
-    hamburger.addEventListener('click', () => {
-      if (hamburger.classList.contains('active')) {
-        closeMobileMenu();
-      } else {
-        openMobileMenu();
-      }
-    });
-
-    // Mobile menu link actions (close + navigate)
-    mobileProductsBtn && mobileProductsBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeMobileMenu();
-      document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' });
-    });
-
-    mobileWishlistBtn && mobileWishlistBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeMobileMenu();
-      openWishlist();
-    });
-
-    // Drag-to-scroll on product row
-    const productScroll = document.getElementById('productScroll');
-    if (productScroll) {
-      let isDown = false, startX, scrollLeft;
-      productScroll.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - productScroll.offsetLeft; scrollLeft = productScroll.scrollLeft; });
-      productScroll.addEventListener('mouseleave', () => { isDown = false; });
-      productScroll.addEventListener('mouseup', () => { isDown = false; });
-      productScroll.addEventListener('mousemove', (e) => {
-        if (!isDown) return; e.preventDefault();
-        const x = e.pageX - productScroll.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        productScroll.scrollLeft = scrollLeft - walk;
-      });
-    }
-
-    // ---------- CORS-safe submission (URL-encoded to avoid preflight) ----------
-    function submitWishlistForm(form) {
-      const fd = new FormData(form);
-      const body = new URLSearchParams({
-        firstName: fd.get('firstName'),
-        lastName:  fd.get('lastName'),
-        email:     fd.get('email'),
-        phone:     fd.get('phone')
-      });
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
-
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-      })
-      .then(r => r.json())
-      .then(result => {
-        if (result.status === 'success') {
-          document.getElementById('confirmationMessage').style.display = 'block';
-          form.style.display = 'none';
-        } else {
-          alert('Error: ' + result.message);
-        }
-      })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        alert('Error submitting form.');
-      });
-    }
-    window.submitWishlistForm = submitWishlistForm; // expose for inline onsubmit
-  </script>
-
-  <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999; background:#faf9f6;">
-    © LUTHER CLOTHING LIMITED<br>EST.2025
-  </footer>
-</body>
-</html>
+    <!-- Confirmation -->
+    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
+      <h3 style="text-transform: uppercase; font
