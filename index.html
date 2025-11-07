@@ -68,45 +68,52 @@
     .product-image:hover .front { opacity: 0; }
     .product-image:hover .back { opacity: 1; }
     /* Section padding that matches the reference layout */
+/* SECTION PADDING (desktop/tablet default) */
 #productSection {
-  padding: 80px 6vw 60px;   /* desktop/tablet balanced side margins */
+  padding: 80px 4vw 60px; /* slightly tighter than 6vw to remove the “empty” edges */
 }
 
-/* Product grid: responsive base */
+/* BASE GRID (fallback) */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2.5vw;               /* responsive gutters */
-  justify-content: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* safe base */
+  gap: 16px;
   align-items: stretch;
 }
 
-/* Desktop ≥1200px: 4 across, tight clean gaps */
-@media (min-width: 1200px) {
-  .product-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+/* TABLET: 3 columns */
+@media (min-width: 768px) {
+  #productSection {
+    padding: 80px 4vw 60px; /* keep consistent side margins */
   }
-}
-
-/* Tablet 768–1199px: 3 across */
-@media (min-width: 768px) and (max-width: 1199px) {
   .product-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
   }
 }
 
-/* Mobile ≤767px: 2 across, small gutters + smaller section padding */
-@media (max-width: 767px) {
+/* DESKTOP: 4 columns (fills width, clean edges) */
+@media (min-width: 1200px) {
   #productSection {
-    padding: 40px 4vw 60px;
+    padding: 80px 4vw 60px; /* adjust this to 3vw if you want even tighter edges */
   }
   .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
   }
 }
+
+/* MOBILE: 2 columns, tight gutters */
+@media (max-width: 767.98px) {
+  #productSection {
+    padding: 40px 3.5vw 60px; /* smaller side padding on phones */
+  }
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px; /* tight mobile gutters like your screenshot */
+  }
+}
+
 
 
 
