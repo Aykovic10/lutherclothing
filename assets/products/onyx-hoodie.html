@@ -223,16 +223,15 @@ body.menu-open { overflow: hidden; }
 
         <div class="sub" style="margin-bottom:8px">Select Size</div>
         <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
-          <button class="chip" data-val="XS">XS</button>
           <button class="chip" data-val="S">S</button>
-          <button class="chip" data-val="M" aria-pressed="true">M</button>
+          <button class="chip" data-val="M">M</button>
           <button class="chip" data-val="L">L</button>
           <button class="chip" data-val="XL">XL</button>
-          <button class="chip" data-val="XXL">XXL</button>
         </div>
 
         <div class="cta">
-          <button class="btn" id="ctaBtn">Select a size</button>
+          <button class="btn" id="ctaBtn" disabled>Select a size</button>
+          .btn[disabled] { opacity:.5; cursor:not-allowed; }
           <div class="flags">
             <div class="flag"><span class="muted">🏁</span> Earn 88 Prestige Points</div>
             <div class="flag"><span class="muted">🚚</span> Free shipping over $300</div>
@@ -295,20 +294,40 @@ body.menu-open { overflow: hidden; }
       });
     });
 
-    /* ------- Size selector + CTA ------- */
-    const sizeChips = document.getElementById('sizeChips').querySelectorAll('.chip');
-    const ctaBtn = document.getElementById('ctaBtn');
-    let selectedSize = 'M';
+    <script>
+// ------- Size selector + CTA -------
+const sizeChips = document.querySelectorAll('#sizeChips .chip');
+const ctaBtn = document.getElementById('ctaBtn');
+let selectedSize = null; // no default
 
-    sizeChips.forEach(ch=>{
-      if(ch.getAttribute('aria-pressed')==='true'){ selectedSize = ch.dataset.val; }
-      ch.addEventListener('click', ()=>{
-        sizeChips.forEach(b=>b.setAttribute('aria-pressed','false'));
-        ch.setAttribute('aria-pressed','true');
-        selectedSize = ch.dataset.val;
-        ctaBtn.textContent = `Join Wishlist — ${selectedSize}`;
-      });
-    });
+// ensure initial state
+ctaBtn.disabled = true;
+ctaBtn.textContent = 'Select a size';
+
+// selection handler
+sizeChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    // clear selection UI
+    sizeChips.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    // set new selection
+    chip.setAttribute('aria-pressed', 'true');
+    selectedSize = chip.dataset.val;
+
+    // enable CTA
+    ctaBtn.disabled = false;
+    ctaBtn.textContent = `Join Wishlist — ${selectedSize}`;
+  });
+});
+
+// guard openWishlist if somehow clicked while disabled (extra safety)
+ctaBtn.addEventListener('click', (e) => {
+  if (ctaBtn.disabled || !selectedSize) {
+    e.preventDefault();
+    return;
+  }
+  openWishlist();
+});
+</script>
 
     // Open the popup (same as landing page) instead of redirect
 function openWishlist() {
