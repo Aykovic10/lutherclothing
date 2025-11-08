@@ -137,16 +137,6 @@ main {
 }
 
 
-.frame img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: 1;              /* ADD: keep image below arrows */
-}
-
 .navArrow{
   position: absolute;
   top: 50%;
@@ -234,10 +224,15 @@ main {
   z-index:1; /* image layer */
 }
 .slide{
-  width:100%; height:100%;
-  object-fit: cover; object-position:center;
-  user-select:none; -webkit-user-drag: none;
+  position: relative;            /* <-- important: not absolute */
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  object-position:center;
+  user-select:none;
+  -webkit-user-drag: none;
 }
+
 /* While dragging, disable the transition so it follows the finger */
 .frame.dragging .slide-track{
   transition: none;
@@ -367,13 +362,21 @@ const slideB = document.getElementById('slideB');
 const idxEl  = document.getElementById('idx');
 const totalEl= document.getElementById('total'); totalEl.textContent = imgs.length;
 
+const frameEl = document.querySelector('.frame');
+
 let i = 0;                 // current index shown in slideA
 let animating = false;     // lock during transitions
+let dragging = false;
+let startX = 0;
+let currentX = 0;
 
 function setIndex(n){ i = (n + imgs.length) % imgs.length; }
 function updateCounter(){ idxEl.textContent = i + 1; }
 
-// NEXT (slides left)
+// helper: width in px of the viewport/frame
+function fw(){ return frameEl.clientWidth; }
+
+// NEXT (slides left by frame width in px)
 function slideNext() {
   if (animating) return;
   animating = true;
@@ -385,48 +388,48 @@ function slideNext() {
   slideB.src = imgs[nextIndex];
 
   track.style.transition = 'none';
-  track.style.transform = 'translateX(0)';
-  void track.offsetWidth; // reflow
+  track.style.transform  = 'translateX(0px)';
+  void track.offsetWidth;
   track.style.transition = 'transform 350ms ease';
-  track.style.transform = 'translateX(-100%)';
+  track.style.transform  = `translateX(${-fw()}px)`;
 
   track.addEventListener('transitionend', function done(){
     track.removeEventListener('transitionend', done);
     setIndex(i + 1);
     slideA.src = imgs[i];              // commit new current to A
     track.style.transition = 'none';
-    track.style.transform = 'translateX(0)';
+    track.style.transform  = 'translateX(0px)';
     animating = false;
     updateCounter();
-  });
+  }, { once:true });
 }
 
-// PREV (slides right)
+// PREV (slides right by frame width in px)
 function slidePrev() {
   if (animating) return;
   animating = true;
 
   const prevIndex = (i - 1 + imgs.length) % imgs.length;
 
-  // trick: position track at -100% with prev in left panel (B), then animate to 0
+  // set prev on left panel (B), position track at -fw, animate to 0
   slideB.src = imgs[prevIndex];
   slideA.src = imgs[i];
 
   track.style.transition = 'none';
-  track.style.transform = 'translateX(-100%)';
-  void track.offsetWidth; // reflow
+  track.style.transform  = `translateX(${-fw()}px)`;
+  void track.offsetWidth;
   track.style.transition = 'transform 350ms ease';
-  track.style.transform = 'translateX(0)';
+  track.style.transform  = 'translateX(0px)';
 
   track.addEventListener('transitionend', function done(){
     track.removeEventListener('transitionend', done);
     setIndex(i - 1);
-    slideA.src = imgs[i];              // commit new current to A
+    slideA.src = imgs[i];
     track.style.transition = 'none';
-    track.style.transform = 'translateX(0)';
+    track.style.transform  = 'translateX(0px)';
     animating = false;
     updateCounter();
-  });
+  }, { once:true });
 }
 
 // init
@@ -439,22 +442,17 @@ document.getElementById('prevBtn').addEventListener('click', slidePrev);
 document.getElementById('nextBtn').addEventListener('click', slideNext);
 
 // ----- Touch & Mouse drag (follow finger) -----
-const frameEl = document.querySelector('.frame');
-let dragging = false;
-let startX = 0;
-let currentX = 0;
-
 function startDrag(x){
   if (animating) return;
   dragging = true;
   startX = x; currentX = x;
   frameEl.classList.add('dragging');
 
-  // prepare panels: A=current, B=next
+  // prepare panels: A=current, B=next (to the right)
   slideA.src = imgs[i];
   slideB.src = imgs[(i+1)%imgs.length];
   track.style.transition = 'none';
-  track.style.transform = 'translateX(0)';
+  track.style.transform  = 'translateX(0px)';
 }
 function moveDrag(x){
   if (!dragging) return;
@@ -468,43 +466,41 @@ function endDrag(){
   frameEl.classList.remove('dragging');
 
   const dx = currentX - startX;
-  const threshold = 80; // px to switch
+  const threshold = Math.min(120, fw()*0.2); // 20% width or 120px
 
   if (dx <= -threshold) {
     // finish NEXT from current offset
-    const w = frameEl.clientWidth;
     track.style.transition = 'transform 250ms ease';
-    track.style.transform  = `translateX(${-w}px)`;
+    track.style.transform  = `translateX(${-fw()}px)`;
     track.addEventListener('transitionend', function done(){
       track.removeEventListener('transitionend', done);
       setIndex(i + 1);
       slideA.src = imgs[i];
       track.style.transition = 'none';
-      track.style.transform = 'translateX(0)';
+      track.style.transform  = 'translateX(0px)';
       updateCounter();
     }, { once:true });
   } else if (dx >= threshold) {
-    // go PREV: put prev on left, jump to -w, animate to 0
+    // go PREV: put prev on left, jump to -fw, animate to 0
     const prevIndex = (i - 1 + imgs.length) % imgs.length;
     slideB.src = imgs[prevIndex]; // use B as left panel
-    const w = frameEl.clientWidth;
     track.style.transition = 'none';
-    track.style.transform  = `translateX(${-w}px)`;
+    track.style.transform  = `translateX(${-fw()}px)`;
     void track.offsetWidth;
     track.style.transition = 'transform 250ms ease';
-    track.style.transform  = 'translateX(0)';
+    track.style.transform  = 'translateX(0px)';
     track.addEventListener('transitionend', function done(){
       track.removeEventListener('transitionend', done);
       setIndex(i - 1);
       slideA.src = imgs[i];
       track.style.transition = 'none';
-      track.style.transform = 'translateX(0)';
+      track.style.transform  = 'translateX(0px)';
       updateCounter();
     }, { once:true });
   } else {
     // snap back
     track.style.transition = 'transform 200ms ease';
-    track.style.transform  = 'translateX(0)';
+    track.style.transform  = 'translateX(0px)';
   }
 }
 
@@ -517,11 +513,6 @@ frameEl.addEventListener('touchend',   endDrag, { passive:true });
 frameEl.addEventListener('mousedown', (e)=> startDrag(e.clientX));
 window.addEventListener('mousemove',  (e)=> moveDrag(e.clientX));
 window.addEventListener('mouseup',    endDrag);
-
-// prevent ghost-drag
-slideA.addEventListener('dragstart', e => e.preventDefault());
-slideB.addEventListener('dragstart', e => e.preventDefault());
-</script>
 
 
 // ------- Size selector + CTA -------
@@ -602,32 +593,6 @@ document.addEventListener('DOMContentLoaded', () => {
   mobileWishlist?.addEventListener('click', openFromNav);
 });
 
-  // ----- Mouse / trackpad drag swipe -----
-let isDown = false;
-let startX = 0;
-let endX = 0;
-
-frameEl.addEventListener('mousedown', (e) => {
-  isDown = true;
-  startX = e.clientX;
-});
-
-window.addEventListener('mouseup', (e) => {
-  if (!isDown) return;
-  isDown = false;
-  endX = e.clientX;
-  const dx = endX - startX;
-  const THRESHOLD = 40; // px
-  if (Math.abs(dx) > THRESHOLD) {
-    if (dx < 0) show(i + 1, 'next'); // drag left -> next
-    else        show(i - 1, 'prev'); // drag right -> prev
-  }
-});
-
-// Optional: prevent image being dragged as a ghost
-hero.addEventListener('dragstart', (e) => e.preventDefault());
-
-  </script>
   <!-- WISHLIST POPUP (same as landing) -->
 <div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
   <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
