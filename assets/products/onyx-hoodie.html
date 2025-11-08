@@ -146,13 +146,45 @@ main {
   object-position: center;
 }
 
-    .navArrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 42px; height: 42px; border: 1px solid #111; background: #fff;
-  cursor: pointer; display: grid; place-items: center; border-radius: 8px; opacity: .9;
+    .navArrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  /* no box, no border, no bg */
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+
+  /* just the glyph */
+  font-size: 42px;
+  line-height: 1;
+  color: #111;
+  opacity: .7;
+  cursor: pointer;
+
+  /* bigger hit target but invisible */
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
 }
-.navArrow.left  { left: 16px; }
-.navArrow.right { right: 16px; }
+.navArrow:hover { opacity: 1; }
+.navArrow.left  { left: 12px; }
+.navArrow.right { right: 12px; }
+    
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.slide-in-left  { animation: slideInFromLeft 280ms ease both; }
+.slide-in-right { animation: slideInFromRight 280ms ease both; }
+
 
     .count{position:absolute;left:16px;bottom:12px;font-size:.9rem;color:var(--muted)}
 
@@ -312,12 +344,47 @@ const totalEl = document.getElementById('total'); totalEl.textContent = imgs.len
 const thumbs = [...document.querySelectorAll('.thumb')];
 let i = 0;
 
-function show(n){
+function show(n, dir) {
   i = (n + imgs.length) % imgs.length;
+
+  // reset animation classes
+  hero.classList.remove('slide-in-left', 'slide-in-right');
+  void hero.offsetWidth; // reflow to restart animation
+
+  // swap image
   hero.src = imgs[i];
+
+  // animate depending on direction
+  if (dir === 'next') hero.classList.add('slide-in-right');
+  if (dir === 'prev') hero.classList.add('slide-in-left');
+
+  // UI bits
   idxEl.textContent = i + 1;
   thumbs.forEach((t,k)=> t.setAttribute('aria-current', k===i ? 'true' : 'false'));
 }
+
+document.getElementById('prevBtn').addEventListener('click', () => show(i-1, 'prev'));
+document.getElementById('nextBtn').addEventListener('click', () => show(i+1, 'next'));
+
+const frameEl = document.querySelector('.frame');
+let touchStartX = 0;
+let touchEndX   = 0;
+
+frameEl.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+
+frameEl.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].clientX;
+  const dx = touchEndX - touchStartX;
+  const THRESHOLD = 40; // px
+  if (Math.abs(dx) > THRESHOLD) {
+    if (dx < 0) show(i + 1, 'next'); // swipe left -> next
+    else        show(i - 1, 'prev'); // swipe right -> prev
+  }
+}, { passive: true });
+
+    
 document.getElementById('prevBtn').addEventListener('click', ()=> show(i-1));
 document.getElementById('nextBtn').addEventListener('click', ()=> show(i+1));
 thumbs.forEach((btn,k)=>{
