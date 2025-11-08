@@ -144,34 +144,32 @@ main {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  z-index: 1;              /* ADD: keep image below arrows */
 }
 
-    .navArrow{
+.navArrow{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  /* no box, no border, no bg */
   background: transparent;
   border: 0;
   box-shadow: none;
   padding: 0;
-
-  /* just the glyph */
   font-size: 42px;
   line-height: 1;
   color: #111;
   opacity: .7;
   cursor: pointer;
-
-  /* bigger hit target but invisible */
   width: 42px;
   height: 42px;
   display: grid;
   place-items: center;
+  z-index: 2;              /* ADD: arrows above image */
 }
 .navArrow:hover { opacity: 1; }
 .navArrow.left  { left: 12px; }
 .navArrow.right { right: 12px; }
+
     
 @keyframes slideInFromLeft {
   from { opacity: 0; transform: translateX(-24px); }
@@ -380,17 +378,6 @@ frameEl.addEventListener('touchend', (e) => {
   }
 }, { passive: true });
 
-    
-document.getElementById('prevBtn').addEventListener('click', ()=> show(i-1));
-document.getElementById('nextBtn').addEventListener('click', ()=> show(i+1));
-thumbs.forEach((btn,k)=>{
-  btn.addEventListener('click', ()=>{
-    const src = btn.querySelector('img').dataset.src;
-    const found = imgs.indexOf(src);
-    show(found>-1 ? found : k);
-  });
-});
-
 // ------- Size selector + CTA -------
 const sizeChips = document.querySelectorAll('#sizeChips .chip');
 const ctaBtn = document.getElementById('ctaBtn');
@@ -468,8 +455,32 @@ document.addEventListener('DOMContentLoaded', () => {
   headerWishlist?.addEventListener('click', openFromNav);
   mobileWishlist?.addEventListener('click', openFromNav);
 });
-</script>
-  
+
+  // ----- Mouse / trackpad drag swipe -----
+let isDown = false;
+let startX = 0;
+let endX = 0;
+
+frameEl.addEventListener('mousedown', (e) => {
+  isDown = true;
+  startX = e.clientX;
+});
+
+window.addEventListener('mouseup', (e) => {
+  if (!isDown) return;
+  isDown = false;
+  endX = e.clientX;
+  const dx = endX - startX;
+  const THRESHOLD = 40; // px
+  if (Math.abs(dx) > THRESHOLD) {
+    if (dx < 0) show(i + 1, 'next'); // drag left -> next
+    else        show(i - 1, 'prev'); // drag right -> prev
+  }
+});
+
+// Optional: prevent image being dragged as a ghost
+hero.addEventListener('dragstart', (e) => e.preventDefault());
+
   </script>
   <!-- WISHLIST POPUP (same as landing) -->
 <div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
