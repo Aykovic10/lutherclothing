@@ -95,7 +95,7 @@ body.menu-open { overflow: hidden; }
 
     /* ====== LAYOUT ====== */
     main { max-width: 1280px; margin: 0 auto; padding: 0; padding-top: 50px; } /* header = 50px */
-.split { display: grid; grid-template-columns: 1fr 520px; gap: 0; }
+.split { display: grid; grid-template-columns: 642px 1fr; gap: 0; }
 @media (max-width: 980px){ .split { grid-template-columns: 1fr; } }
 
     /* ====== GALLERY ====== */
@@ -108,17 +108,14 @@ body.menu-open { overflow: hidden; }
   overflow: hidden;
   background: #f6f6f6;
 }
-.frame img{
+.frame img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;        /* fill the container (zoom/crop), no side blanks */
-  object-position: top right; /* anchor so it “starts” from the top-right */
+  object-fit: cover;       /* fills the container, no blank space */
+  object-position: center; /* always keeps the image centered */
 }
-
-
-
     .navArrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 42px; height: 42px; border: 1px solid #111; background: #fff;
