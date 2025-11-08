@@ -300,7 +300,10 @@ main {
   <!-- ====== HEADER (copied from index) ====== -->
   <header id="header">
     <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px;">Instagram</a>
-    <img id="headerLogo" class="logo-center" src="/assets/logos/lutherTextBlack.png" alt="Luther Logo">
+    <a href="/index.html" style="display:inline-block">
+  <img id="headerLogo" class="logo-center" src="/assets/logos/lutherTextBlack.png" alt="Luther Logo">
+</a>
+
     <div class="nav-links">
       <a href="/index.html#productSection" id="productsBtn">Products</a>
       <a href="#wishlist" id="wishlistBtn">Wishlist</a>
@@ -473,72 +476,114 @@ updateCounter();
 document.getElementById('prevBtn').addEventListener('click', slidePrev);
 document.getElementById('nextBtn').addEventListener('click', slideNext);
 
-// ----- Touch & Mouse drag (follow finger) -----
+let dragMode = null; // 'next' or 'prev'
+
 function startDrag(x){
   if (animating) return;
   dragging = true;
   startX = x; currentX = x;
+  dragMode = null;
   frameEl.classList.add('dragging');
-
-  // prepare panels: A=current, B=next (to the right)
-  slideA.src = imgs[i];
-  slideB.src = imgs[(i+1)%imgs.length];
   track.style.transition = 'none';
-  track.style.transform  = 'translateX(0px)';
 }
+
 function moveDrag(x){
   if (!dragging) return;
   currentX = x;
   const dx = currentX - startX;
-  track.style.transform = `translateX(${dx}px)`;
+  const w  = fw();
+
+  if (dx < 0) {
+    // Dragging LEFT -> NEXT
+    if (dragMode !== 'next') {
+      // baseline at 0, right panel = next image
+      slideA.src = imgs[i];
+      slideB.src = imgs[(i + 1) % imgs.length];
+      track.style.transition = 'none';
+      track.style.transform  = 'translateX(0px)';
+      dragMode = 'next';
+    }
+    track.style.transform = `translateX(${dx}px)`; // from 0 to -w
+  } else if (dx > 0) {
+    // Dragging RIGHT -> PREV
+    const prevIndex = (i - 1 + imgs.length) % imgs.length;
+    if (dragMode !== 'prev') {
+      // baseline at -w, left panel = prev image
+      slideA.src = imgs[i];
+      slideB.src = imgs[prevIndex];
+      track.style.transition = 'none';
+      track.style.transform  = `translateX(${-w}px)`;
+      dragMode = 'prev';
+    }
+    track.style.transform = `translateX(${-w + dx}px)`; // from -w to 0
+  } else {
+    // no movement
+    if (!dragMode) {
+      slideA.src = imgs[i];
+      slideB.src = imgs[(i + 1) % imgs.length];
+      track.style.transform = 'translateX(0px)';
+    }
+  }
 }
+
 function endDrag(){
   if (!dragging) return;
   dragging = false;
   frameEl.classList.remove('dragging');
 
   const dx = currentX - startX;
-  const threshold = Math.min(120, fw()*0.2); // 20% width or 120px
+  const w  = fw();
+  const threshold = Math.min(120, w * 0.2);
 
-  if (dx <= -threshold) {
-  // finish NEXT from current offset
-  animating = true;
-  track.style.transition = 'transform 250ms ease';
-  track.style.transform  = `translateX(${-fw()}px)`;
-  track.addEventListener('transitionend', function done(){
-    track.removeEventListener('transitionend', done);
-    setIndex(i + 1);
-    slideA.src = imgs[i];
-    track.style.transition = 'none';
+  if (dragMode === 'next') {
+    if (dx <= -threshold) {
+      // commit NEXT
+      animating = true;
+      track.style.transition = 'transform 250ms ease';
+      track.style.transform  = `translateX(${-w}px)`;
+      track.addEventListener('transitionend', function done(){
+        track.removeEventListener('transitionend', done);
+        setIndex(i + 1);
+        slideA.src = imgs[i];
+        track.style.transition = 'none';
+        track.style.transform  = 'translateX(0px)';
+        animating = false;
+        updateCounter();
+      }, { once:true });
+    } else {
+      // snap back
+      track.style.transition = 'transform 200ms ease';
+      track.style.transform  = 'translateX(0px)';
+    }
+  } else if (dragMode === 'prev') {
+    if (dx >= threshold) {
+      // commit PREV (from -w to 0)
+      animating = true;
+      track.style.transition = 'transform 250ms ease';
+      track.style.transform  = 'translateX(0px)';
+      track.addEventListener('transitionend', function done(){
+        track.removeEventListener('transitionend', done);
+        setIndex(i - 1);
+        slideA.src = imgs[i];
+        track.style.transition = 'none';
+        track.style.transform  = 'translateX(0px)';
+        animating = false;
+        updateCounter();
+      }, { once:true });
+    } else {
+      // snap back to -w baseline, then jump back to 0 baseline quietly
+      track.style.transition = 'transform 200ms ease';
+      track.style.transform  = `translateX(${-w}px)`;
+      track.addEventListener('transitionend', function back(){
+        track.removeEventListener('transitionend', back);
+        track.style.transition = 'none';
+        track.style.transform  = 'translateX(0px)';
+      }, { once:true });
+    }
+  } else {
+    // no direction chosen, just snap to 0
+    track.style.transition = 'transform 200ms ease';
     track.style.transform  = 'translateX(0px)';
-    animating = false;
-    updateCounter();
-  }, { once:true });
-
-} else if (dx >= threshold) {
-  // go PREV: put prev on left, jump to -fw, animate to 0
-  animating = true;
-  const prevIndex = (i - 1 + imgs.length) % imgs.length;
-  slideB.src = imgs[prevIndex]; // use B as left panel
-  track.style.transition = 'none';
-  track.style.transform  = `translateX(${-fw()}px)`;
-  void track.offsetWidth;
-  track.style.transition = 'transform 250ms ease';
-  track.style.transform  = 'translateX(0px)';
-  track.addEventListener('transitionend', function done(){
-    track.removeEventListener('transitionend', done);
-    setIndex(i - 1);
-    slideA.src = imgs[i];
-    track.style.transition = 'none';
-    track.style.transform  = 'translateX(0px)';
-    animating = false;
-    updateCounter();
-  }, { once:true });
-
-} else {
-  // snap back
-  track.style.transition = 'transform 200ms ease';
-  track.style.transform  = 'translateX(0px)';
   }
 }
 
