@@ -681,7 +681,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
   <!-- WISHLIST POPUP (same as landing) -->
-<div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
+<div class="wishlist-popup" id="wishlistPopup"
+     style="position:fixed; inset:0; display:none; z-index:2000; justify-content:center; align-items:center;">
+
   <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
     <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
     <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
