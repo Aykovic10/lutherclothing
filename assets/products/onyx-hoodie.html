@@ -94,23 +94,30 @@ body.menu-open { overflow: hidden; }
     }
 
     /* ====== LAYOUT ====== */
-    main{max-width:1280px;margin:0 auto;padding:24px; padding-top: 80px;} /* push under fixed header */
-    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:28px}
-    @media (max-width: 980px){ .split{grid-template-columns:1fr;gap:20px} }
+    main { max-width: 1280px; margin: 0 auto; padding: 0; padding-top: 50px; } /* header = 50px */
+.split { display: grid; grid-template-columns: 1fr 520px; gap: 0; }
+@media (max-width: 980px){ .split { grid-template-columns: 1fr; } }
 
     /* ====== GALLERY ====== */
-    .gallery{position:relative;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}
-    .frame{position:relative;aspect-ratio:3/4;background:#eee;border-radius:6px;overflow:hidden}
-    .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .gallery { position: relative; background: transparent; border: 0; border-radius: 0; padding: 0; }
+.frame {
+  position: sticky;        /* keeps image visible while details scroll */
+  top: 50px;               /* same as header height */
+  height: calc(100vh - 50px);
+  border-radius: 0;
+  overflow: hidden;
+  background: #f6f6f6;
+}
+.frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 
-    .navArrow{
-      position:absolute;top:50%;transform:translateY(-50%);
-      width:36px;height:36px;border:1px solid var(--text);background:#fff;cursor:pointer;
-      display:grid;place-items:center;border-radius:8px;
-    }
-    .navArrow.left{left:8px}
-    .navArrow.right{right:8px}
-    .navArrow:focus{outline:2px solid #000;outline-offset:2px}
+
+    .navArrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 42px; height: 42px; border: 1px solid #111; background: #fff;
+  cursor: pointer; display: grid; place-items: center; border-radius: 8px; opacity: .9;
+}
+.navArrow.left  { left: 16px; }
+.navArrow.right { right: 16px; }
 
     .count{position:absolute;left:16px;bottom:12px;font-size:.9rem;color:var(--muted)}
 
@@ -205,13 +212,6 @@ body.menu-open { overflow: hidden; }
           <button class="navArrow left" id="prevBtn" aria-label="Previous image" type="button">‹</button>
           <button class="navArrow right" id="nextBtn" aria-label="Next image" type="button">›</button>
           <div class="count"><span id="idx">1</span> / <span id="total">4</span></div>
-        </div>
-
-        <div class="thumbs" id="thumbs">
-          <button class="thumb" aria-current="true"><img data-src="/assets/products/essentials/onyx-hoodie/front.png" alt="Front"></button>
-          <button class="thumb"><img data-src="/assets/products/essentials/onyx-hoodie/back.png" alt="Back"></button>
-          <button class="thumb"><img data-src="/assets/products/essentials/onyx-hoodie/detail1.png" alt="Detail 1"></button>
-          <button class="thumb"><img data-src="/assets/products/essentials/onyx-hoodie/detail2.png" alt="Detail 2"></button>
         </div>
       </section>
 
