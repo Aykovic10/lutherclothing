@@ -116,23 +116,23 @@ main {
     /* ====== GALLERY ====== */
     .gallery { position: relative; background: transparent; border: 0; border-radius: 0; padding: 0; }
 .frame {
-  position: sticky;           /* stays visible while details scroll */
-  top: 0;                     /* stick to very top, no gap */
-  height: 100vh;              /* full viewport height */
-  width: 100%;                /* full width of its grid column */
+  position: sticky;               /* keeps image visible as you scroll */
+  top: 50px;                      /* start right below header (header = 50px) */
+  height: calc(100vh - 50px);     /* fill the rest of the screen height */
+  width: 100%;                    /* span the full width of its column */
   border-radius: 0;
   overflow: hidden;
   background: #f6f6f6;
-  margin: 0;                  /* remove any inherited spacing */
-  padding: 0;                 /* ensure no internal space */
+  margin: 0;
+  padding: 0;
 }
 .frame img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;       /* fills the space without blanks */
-  object-position: center; /* centered composition */
+  object-fit: cover;       /* fills without blank spaces */
+  object-position: center; /* stays centered across screen sizes */
 }
     .navArrow {
   position: absolute; top: 50%; transform: translateY(-50%);
