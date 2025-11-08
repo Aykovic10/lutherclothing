@@ -221,6 +221,29 @@ main {
 
     /* ====== MISC ====== */
     .muted{color:var(--muted)}
+
+    /* Sliding track (two panels wide) */
+.slide-track{
+  position:absolute; inset:0;
+  display:flex;
+  width:200%;
+  height:100%;
+  transform: translateX(0);
+  transition: transform 350ms ease;
+  will-change: transform;
+  z-index:1; /* image layer */
+}
+.slide{
+  width:100%; height:100%;
+  object-fit: cover; object-position:center;
+  user-select:none; -webkit-user-drag: none;
+}
+/* While dragging, disable the transition so it follows the finger */
+.frame.dragging .slide-track{
+  transition: none;
+}
+
+    
   </style>
 
   <!-- SEO: Product JSON-LD -->
@@ -271,7 +294,11 @@ main {
       <!-- ============== GALLERY ============== -->
       <section class="gallery" aria-label="Product gallery">
         <div class="frame">
-          <img id="heroImg" src="/assets/products/essentials/onyx-hoodie/front.png" alt="Onyx Black Hoodie front">
+          <div class="slide-track" id="slideTrack">
+  <img class="slide" id="slideA" src="/assets/products/essentials/onyx-hoodie/front.png" alt="Onyx Black Hoodie">
+  <img class="slide" id="slideB" src="/assets/products/essentials/onyx-hoodie/back.png"  alt="">
+</div>
+
           <button class="navArrow left" id="prevBtn" aria-label="Previous image" type="button">‹</button>
           <button class="navArrow right" id="nextBtn" aria-label="Next image" type="button">›</button>
           <div class="count"><span id="idx">1</span> / <span id="total">4</span></div>
@@ -327,56 +354,175 @@ main {
   <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999;">© LUTHER CLOTHING LIMITED<br>EST.2025</footer>
 
   <script>
-// ------- Gallery Logic -------
+<script>
+// ------- Gallery Logic (real slide) -------
 const imgs = [
   "/assets/products/essentials/onyx-hoodie/front.png",
   "/assets/products/essentials/onyx-hoodie/back.png"
 ];
-const hero = document.getElementById('heroImg');
-const idxEl = document.getElementById('idx');
-const totalEl = document.getElementById('total'); totalEl.textContent = imgs.length;
-const thumbs = [...document.querySelectorAll('.thumb')];
-let i = 0;
 
-function show(n, dir) {
-  i = (n + imgs.length) % imgs.length;
+const track  = document.getElementById('slideTrack');
+const slideA = document.getElementById('slideA');
+const slideB = document.getElementById('slideB');
+const idxEl  = document.getElementById('idx');
+const totalEl= document.getElementById('total'); totalEl.textContent = imgs.length;
 
-  // reset animation classes
-  hero.classList.remove('slide-in-left', 'slide-in-right');
-  void hero.offsetWidth; // reflow to restart animation
+let i = 0;                 // current index shown in slideA
+let animating = false;     // lock during transitions
 
-  // swap image
-  hero.src = imgs[i];
+function setIndex(n){ i = (n + imgs.length) % imgs.length; }
+function updateCounter(){ idxEl.textContent = i + 1; }
 
-  // animate depending on direction
-  if (dir === 'next') hero.classList.add('slide-in-right');
-  if (dir === 'prev') hero.classList.add('slide-in-left');
+// NEXT (slides left)
+function slideNext() {
+  if (animating) return;
+  animating = true;
 
-  // UI bits
-  idxEl.textContent = i + 1;
-  thumbs.forEach((t,k)=> t.setAttribute('aria-current', k===i ? 'true' : 'false'));
+  const nextIndex = (i + 1) % imgs.length;
+
+  // prepare: A = current (left panel), B = next (right panel)
+  slideA.src = imgs[i];
+  slideB.src = imgs[nextIndex];
+
+  track.style.transition = 'none';
+  track.style.transform = 'translateX(0)';
+  void track.offsetWidth; // reflow
+  track.style.transition = 'transform 350ms ease';
+  track.style.transform = 'translateX(-100%)';
+
+  track.addEventListener('transitionend', function done(){
+    track.removeEventListener('transitionend', done);
+    setIndex(i + 1);
+    slideA.src = imgs[i];              // commit new current to A
+    track.style.transition = 'none';
+    track.style.transform = 'translateX(0)';
+    animating = false;
+    updateCounter();
+  });
 }
 
-document.getElementById('prevBtn').addEventListener('click', () => show(i-1, 'prev'));
-document.getElementById('nextBtn').addEventListener('click', () => show(i+1, 'next'));
+// PREV (slides right)
+function slidePrev() {
+  if (animating) return;
+  animating = true;
 
+  const prevIndex = (i - 1 + imgs.length) % imgs.length;
+
+  // trick: position track at -100% with prev in left panel (B), then animate to 0
+  slideB.src = imgs[prevIndex];
+  slideA.src = imgs[i];
+
+  track.style.transition = 'none';
+  track.style.transform = 'translateX(-100%)';
+  void track.offsetWidth; // reflow
+  track.style.transition = 'transform 350ms ease';
+  track.style.transform = 'translateX(0)';
+
+  track.addEventListener('transitionend', function done(){
+    track.removeEventListener('transitionend', done);
+    setIndex(i - 1);
+    slideA.src = imgs[i];              // commit new current to A
+    track.style.transition = 'none';
+    track.style.transform = 'translateX(0)';
+    animating = false;
+    updateCounter();
+  });
+}
+
+// init
+slideA.src = imgs[i];
+slideB.src = imgs[(i+1)%imgs.length];
+updateCounter();
+
+// arrows
+document.getElementById('prevBtn').addEventListener('click', slidePrev);
+document.getElementById('nextBtn').addEventListener('click', slideNext);
+
+// ----- Touch & Mouse drag (follow finger) -----
 const frameEl = document.querySelector('.frame');
-let touchStartX = 0;
-let touchEndX   = 0;
+let dragging = false;
+let startX = 0;
+let currentX = 0;
 
-frameEl.addEventListener('touchstart', (e) => {
-  touchStartX = e.touches[0].clientX;
-}, { passive: true });
+function startDrag(x){
+  if (animating) return;
+  dragging = true;
+  startX = x; currentX = x;
+  frameEl.classList.add('dragging');
 
-frameEl.addEventListener('touchend', (e) => {
-  touchEndX = e.changedTouches[0].clientX;
-  const dx = touchEndX - touchStartX;
-  const THRESHOLD = 40; // px
-  if (Math.abs(dx) > THRESHOLD) {
-    if (dx < 0) show(i + 1, 'next'); // swipe left -> next
-    else        show(i - 1, 'prev'); // swipe right -> prev
+  // prepare panels: A=current, B=next
+  slideA.src = imgs[i];
+  slideB.src = imgs[(i+1)%imgs.length];
+  track.style.transition = 'none';
+  track.style.transform = 'translateX(0)';
+}
+function moveDrag(x){
+  if (!dragging) return;
+  currentX = x;
+  const dx = currentX - startX;
+  track.style.transform = `translateX(${dx}px)`;
+}
+function endDrag(){
+  if (!dragging) return;
+  dragging = false;
+  frameEl.classList.remove('dragging');
+
+  const dx = currentX - startX;
+  const threshold = 80; // px to switch
+
+  if (dx <= -threshold) {
+    // finish NEXT from current offset
+    const w = frameEl.clientWidth;
+    track.style.transition = 'transform 250ms ease';
+    track.style.transform  = `translateX(${-w}px)`;
+    track.addEventListener('transitionend', function done(){
+      track.removeEventListener('transitionend', done);
+      setIndex(i + 1);
+      slideA.src = imgs[i];
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0)';
+      updateCounter();
+    }, { once:true });
+  } else if (dx >= threshold) {
+    // go PREV: put prev on left, jump to -w, animate to 0
+    const prevIndex = (i - 1 + imgs.length) % imgs.length;
+    slideB.src = imgs[prevIndex]; // use B as left panel
+    const w = frameEl.clientWidth;
+    track.style.transition = 'none';
+    track.style.transform  = `translateX(${-w}px)`;
+    void track.offsetWidth;
+    track.style.transition = 'transform 250ms ease';
+    track.style.transform  = 'translateX(0)';
+    track.addEventListener('transitionend', function done(){
+      track.removeEventListener('transitionend', done);
+      setIndex(i - 1);
+      slideA.src = imgs[i];
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0)';
+      updateCounter();
+    }, { once:true });
+  } else {
+    // snap back
+    track.style.transition = 'transform 200ms ease';
+    track.style.transform  = 'translateX(0)';
   }
-}, { passive: true });
+}
+
+// touch
+frameEl.addEventListener('touchstart', (e)=> startDrag(e.touches[0].clientX), { passive:true });
+frameEl.addEventListener('touchmove',  (e)=> moveDrag(e.touches[0].clientX),  { passive:true });
+frameEl.addEventListener('touchend',   endDrag, { passive:true });
+
+// mouse
+frameEl.addEventListener('mousedown', (e)=> startDrag(e.clientX));
+window.addEventListener('mousemove',  (e)=> moveDrag(e.clientX));
+window.addEventListener('mouseup',    endDrag);
+
+// prevent ghost-drag
+slideA.addEventListener('dragstart', e => e.preventDefault());
+slideB.addEventListener('dragstart', e => e.preventDefault());
+</script>
+
 
 // ------- Size selector + CTA -------
 const sizeChips = document.querySelectorAll('#sizeChips .chip');
