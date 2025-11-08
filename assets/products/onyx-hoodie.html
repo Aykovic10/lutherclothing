@@ -223,15 +223,14 @@ body.menu-open { overflow: hidden; }
 
         <div class="sub" style="margin-bottom:8px">Select Size</div>
         <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
-          <button class="chip" data-val="S">S</button>
-          <button class="chip" data-val="M">M</button>
-          <button class="chip" data-val="L">L</button>
-          <button class="chip" data-val="XL">XL</button>
-        </div>
+  <button class="chip" data-val="S"  aria-pressed="false">S</button>
+  <button class="chip" data-val="M"  aria-pressed="false">M</button>
+  <button class="chip" data-val="L"  aria-pressed="false">L</button>
+  <button class="chip" data-val="XL" aria-pressed="false">XL</button>
+</div>
 
-        <div class="cta">
-          <button class="btn" id="ctaBtn" disabled>Select a size</button>
-          .btn[disabled] { opacity:.5; cursor:not-allowed; }
+<div class="cta">
+  <button class="btn" id="ctaBtn" disabled>Select a size</button>
           <div class="flags">
             <div class="flag"><span class="muted">🏁</span> Earn 88 Prestige Points</div>
             <div class="flag"><span class="muted">🚚</span> Free shipping over $300</div>
