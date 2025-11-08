@@ -182,7 +182,7 @@ body.menu-open { overflow: hidden; }
     <img id="headerLogo" class="logo-center" src="/assets/logos/lutherTextBlack.png" alt="Luther Logo">
     <div class="nav-links">
       <a href="/index.html#productSection" id="productsBtn">Products</a>
-      <a href="/index.html#wishlist" id="wishlistBtn">Wishlist</a>
+      <a href="#wishlist" id="wishlistBtn">Wishlist</a>
     </div>
     <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
@@ -466,6 +466,39 @@ document.addEventListener('DOMContentLoaded', () => {
   if (igBtn) igBtn.addEventListener('click', () => {
     window.open('https://www.instagram.com/lutherclo/', '_blank');
   });
+});
+</script>
+<script>
+// Reuse existing function or define it if missing
+function openWishlist() {
+  const wishlistPopup = document.getElementById('wishlistPopup');
+  if (!wishlistPopup) return;
+  wishlistPopup.style.display = 'flex';
+  document.body.classList.add('menu-open');
+  requestAnimationFrame(() => wishlistPopup.classList.add('show'));
+}
+
+// Hook header + mobile "Wishlist" to open popup locally
+document.addEventListener('DOMContentLoaded', () => {
+  const headerWishlist = document.getElementById('wishlistBtn');
+  const mobileWishlist = document.getElementById('mobileWishlistBtn');
+  const mobileMenu     = document.getElementById('mobileMenu');
+  const hamburger      = document.getElementById('hamburger');
+
+  function openFromNav(e){
+    e.preventDefault();
+    // close mobile menu if it's open
+    if (hamburger && hamburger.classList.contains('active')) {
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded','false');
+      mobileMenu && mobileMenu.classList.remove('show');
+      setTimeout(() => { if (mobileMenu) mobileMenu.style.display = 'none'; }, 400);
+    }
+    openWishlist();
+  }
+
+  headerWishlist && headerWishlist.addEventListener('click', openFromNav);
+  mobileWishlist && mobileWishlist.addEventListener('click', openFromNav);
 });
 </script>
 
