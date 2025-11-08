@@ -170,14 +170,27 @@
     }
 
     /* ====== WISHLIST POPUP ====== */
-    .wishlist-popup {
-      opacity: 0; visibility: hidden; transform: scale(.95);
-      transition: opacity .4s ease, transform .4s ease, visibility .4s;
-      background: rgba(0,0,0,.65) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center/cover;
-      backdrop-filter: blur(8px);
-      display: none; /* default hidden */
-    }
-    .wishlist-popup.open { opacity: 1; visibility: visible; transform: scale(1); display: flex; }
+    /* BEFORE */
+/* .wishlist-popup { ... display: none; } */
+/* .wishlist-popup.open { ... display: flex; } */
+
+/* AFTER */
+.wishlist-popup{
+  display: flex;                 /* always in the tree */
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(.95);
+  pointer-events: none;
+  transition: opacity .4s ease, transform .4s ease, visibility .4s;
+}
+
+.wishlist-popup.open{
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
   </style>
 
   <!-- SEO: Product JSON-LD -->
