@@ -264,36 +264,114 @@ body.menu-open { overflow: hidden; }
   <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999;">© LUTHER CLOTHING LIMITED · EST.2025</footer>
 
   <script>
-    /* ------- Gallery Logic ------- */
-    const imgs = [
-      "/assets/products/essentials/onyx-hoodie/front.png",
-      "/assets/products/essentials/onyx-hoodie/back.png",
-      "/assets/products/essentials/onyx-hoodie/detail1.png",
-      "/assets/products/essentials/onyx-hoodie/detail2.png"
-    ];
-    const hero = document.getElementById('heroImg');
-    const idxEl = document.getElementById('idx');
-    const totalEl = document.getElementById('total'); totalEl.textContent = imgs.length;
-    const thumbs = [...document.querySelectorAll('.thumb')];
-    let i = 0;
+// ------- Gallery Logic -------
+const imgs = [
+  "/assets/products/essentials/onyx-hoodie/front.png",
+  "/assets/products/essentials/onyx-hoodie/back.png",
+  "/assets/products/essentials/onyx-hoodie/detail1.png",
+  "/assets/products/essentials/onyx-hoodie/detail2.png"
+];
+const hero = document.getElementById('heroImg');
+const idxEl = document.getElementById('idx');
+const totalEl = document.getElementById('total'); totalEl.textContent = imgs.length;
+const thumbs = [...document.querySelectorAll('.thumb')];
+let i = 0;
 
-    function show(n){
-      i = (n + imgs.length) % imgs.length;
-      hero.src = imgs[i];
-      idxEl.textContent = i + 1;
-      thumbs.forEach((t,k)=> t.setAttribute('aria-current', k===i ? 'true' : 'false'));
-    }
-    document.getElementById('prevBtn').addEventListener('click', ()=> show(i-1));
-    document.getElementById('nextBtn').addEventListener('click', ()=> show(i+1));
-    thumbs.forEach((btn,k)=>{
-      btn.addEventListener('click', ()=>{
-        const src = btn.querySelector('img').dataset.src;
-        const found = imgs.indexOf(src);
-        show(found>-1 ? found : k);
-      });
-    });
+function show(n){
+  i = (n + imgs.length) % imgs.length;
+  hero.src = imgs[i];
+  idxEl.textContent = i + 1;
+  thumbs.forEach((t,k)=> t.setAttribute('aria-current', k===i ? 'true' : 'false'));
+}
+document.getElementById('prevBtn').addEventListener('click', ()=> show(i-1));
+document.getElementById('nextBtn').addEventListener('click', ()=> show(i+1));
+thumbs.forEach((btn,k)=>{
+  btn.addEventListener('click', ()=>{
+    const src = btn.querySelector('img').dataset.src;
+    const found = imgs.indexOf(src);
+    show(found>-1 ? found : k);
+  });
+});
 
-    <script>
+// ------- Size selector + CTA -------
+const sizeChips = document.querySelectorAll('#sizeChips .chip');
+const ctaBtn = document.getElementById('ctaBtn');
+let selectedSize = null; // no default
+
+ctaBtn.disabled = true;
+ctaBtn.textContent = 'Select a size';
+
+sizeChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    sizeChips.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    chip.setAttribute('aria-pressed', 'true');
+    selectedSize = chip.dataset.val;
+
+    ctaBtn.disabled = false;
+    ctaBtn.textContent = `Join Wishlist — ${selectedSize}`;
+  });
+});
+
+// ------- Wishlist popup open -------
+function openWishlist() {
+  const wishlistPopup = document.getElementById('wishlistPopup');
+  if (!wishlistPopup) return;
+  wishlistPopup.style.display = 'flex';
+  document.body.classList.add('menu-open');
+  requestAnimationFrame(()=> wishlistPopup.classList.add('show'));
+}
+
+// Guard (in case of stray clicks) then open
+ctaBtn.addEventListener('click', (e) => {
+  if (ctaBtn.disabled || !selectedSize) { e.preventDefault(); return; }
+  openWishlist();
+});
+
+// ------- Product header behavior (solid white) -------
+const headerEl = document.getElementById('header');
+const headerLogo = document.getElementById('headerLogo');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+headerLogo.addEventListener('click', () => { window.location.href = '/index.html'; });
+
+function openMobileMenu() {
+  hamburger.classList.add('active');
+  hamburger.setAttribute('aria-expanded', 'true');
+  mobileMenu.style.display = 'flex';
+  document.body.classList.add('menu-open');
+  requestAnimationFrame(() => mobileMenu.classList.add('show'));
+}
+function closeMobileMenu() {
+  hamburger.classList.remove('active');
+  hamburger.setAttribute('aria-expanded', 'false');
+  mobileMenu.classList.remove('show');
+  document.body.classList.remove('menu-open');
+  setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+}
+hamburger.addEventListener('click', () => {
+  if (hamburger.classList.contains('active')) closeMobileMenu();
+  else openMobileMenu();
+});
+document.getElementById('mobileProductsBtn')?.addEventListener('click', closeMobileMenu);
+document.getElementById('mobileWishlistBtn')?.addEventListener('click', closeMobileMenu);
+
+// ------- Hook header + mobile "Wishlist" to open popup locally -------
+document.addEventListener('DOMContentLoaded', () => {
+  const headerWishlist = document.getElementById('wishlistBtn');
+  const mobileWishlist = document.getElementById('mobileWishlistBtn');
+
+  function openFromNav(e){
+    e.preventDefault();
+    if (hamburger && hamburger.classList.contains('active')) closeMobileMenu();
+    openWishlist();
+  }
+
+  headerWishlist?.addEventListener('click', openFromNav);
+  mobileWishlist?.addEventListener('click', openFromNav);
+});
+</script>
+
 // ------- Size selector + CTA -------
 const sizeChips = document.querySelectorAll('#sizeChips .chip');
 const ctaBtn = document.getElementById('ctaBtn');
