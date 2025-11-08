@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Onyx Black Hoodie — LUTHER</title>
+
+  <!-- Self-hosted display font -->
+  <link rel="preload" href="/assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
+  <style>
+    /* ====== TYPE ====== */
+    @font-face {
+      font-family: 'LutherHeavy';
+      src: url('/assets/fonts/futura-heavy.otf') format('opentype');
+      font-weight: 900; font-style: normal; font-display: swap;
+    }
+    :root{
+      --bg: #FAF9F6;
+      --text: #111;
+      --muted: #6b6b6b;
+      --line: #e9e9e9;
+      --ok: #16a34a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:inherit;text-decoration:none}
+
+    /* ====== HEADER ====== */
+    header{
+      position:sticky;top:0;z-index:20;height:64px;background:#fff;
+      border-bottom:1px solid var(--line);
+      display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+      padding:0 16px;
+    }
+    header .left, header .right{display:flex;gap:16px;align-items:center}
+    header .right{justify-content:flex-end}
+    header .logo{height:24px}
+
+    /* ====== LAYOUT ====== */
+    main{max-width:1280px;margin:0 auto;padding:24px}
+    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:28px}
+    @media (max-width: 980px){ .split{grid-template-columns:1fr;gap:20px} }
+
+    /* ====== GALLERY ====== */
+    .gallery{position:relative;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}
+    .frame{position:relative;aspect-ratio:3/4;background:#eee;border-radius:6px;overflow:hidden}
+    .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+    .navArrow{
+      position:absolute;top:50%;transform:translateY(-50%);
+      width:36px;height:36px;border:1px solid var(--text);background:#fff;cursor:pointer;
+      display:grid;place-items:center;border-radius:8px;
+    }
+    .navArrow.left{left:8px}
+    .navArrow.right{right:8px}
+    .navArrow:focus{outline:2px solid #000;outline-offset:2px}
+
+    .count{position:absolute;left:16px;bottom:12px;font-size:.9rem;color:var(--muted)}
+
+    .thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+    .thumb{aspect-ratio:3/4;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:#f1f1f1}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .thumb[aria-current="true"]{border-color:#000}
+
+    /* ====== DETAILS ====== */
+    .title{font-family:'LutherHeavy',inherit;font-size:2rem;line-height:1.1;margin:0 0 6px}
+    .sub{color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:.8rem;margin-bottom:14px}
+    .price{font-weight:600;margin-bottom:18px}
+
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .chip{
+      min-width:60px; text-align:center; padding:12px 14px; font-size:.85rem;
+      border:1px solid var(--line); background:#fff; cursor:pointer; border-radius:6px;
+    }
+    .chip[disabled]{opacity:.35;cursor:not-allowed}
+    .chip[aria-pressed="true"]{border-color:#000}
+
+    .cta{position:sticky;top:80px;display:flex;flex-direction:column;gap:10px;margin:18px 0}
+    .btn{
+      padding:14px 16px;text-transform:uppercase;border:1px solid #000;background:#000;color:#fff;cursor:pointer;border-radius:8px;
+    }
+    .flags{display:flex;flex-direction:column;gap:8px;background:#f6f6f6;border:1px solid var(--line);border-radius:8px;padding:12px}
+    .flag{display:flex;align-items:center;gap:10px;font-size:.9rem;color:#333}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+
+    /* ====== ACCORDIONS ====== */
+    .accordion{border-top:1px solid var(--line);margin-top:16px}
+    details{border-bottom:1px solid var(--line);padding:14px 0}
+    summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+    summary::marker{display:none}
+    .acc-body{color:#333;font-size:.95rem;padding-top:10px;line-height:1.6}
+
+    /* ====== MISC ====== */
+    .muted{color:var(--muted)}
+  </style>
+
+  <!-- SEO: Product JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Product",
+    "name":"Onyx Black Hoodie",
+    "image":[
+      "/assets/products/essentials/onyx-hoodie/front.png",
+      "/assets/products/essentials/onyx-hoodie/back.png",
+      "/assets/products/essentials/onyx-hoodie/detail1.png",
+      "/assets/products/essentials/onyx-hoodie/detail2.png"
+    ],
+    "description":"Heavyweight fleece — Signature fit",
+    "brand":{"@type":"Brand","name":"LUTHER"},
+    "offers":{
+      "@type":"Offer",
+      "priceCurrency":"USD",
+      "price":"88",
+      "availability":"https://schema.org/PreOrder",
+      "url":"https://yourdomain.com/products/onyx-hoodie.html"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="left"><a href="/index.html" aria-label="Back to shop">← Back</a></div>
+    <img class="logo" src="/assets/brand/lutherTextBlack.png" alt="LUTHER"/>
+    <div class="right"><a href="https://www.instagram.com/lutherclo/" target="_blank" rel="noopener">Instagram</a></div>
+  </header>
+
+  <main>
+    <div class="split">
+      <!-- ============== GALLERY ============== -->
+      <section class="gallery" aria-label="Product gallery">
+        <div class="frame">
+          <img id="heroImg" src="/assets/products/essentials/onyx-hoodie/front.png" alt="Onyx Black Hoodie front">
+          <button class="navArrow left" id="prevBtn" aria-label="Previous image" type="button">‹</button>
+          <button class="navArrow right" id="nextBtn" aria-label="Next image" type="button">›</button>
+          <div class="count"><span id="idx">1</span> / <span id="total">4</span></div>
+        </div>
+
+        <div class="thumbs" id="thumbs">
+          <button class="thumb" aria-current="true"><img data-src="/assets/products/essentials/onyx-hoodie/front.png" alt="Front"></button>
+          <button class="thumb"><img data-src="/assets/products/essentials/onyx-hoodie/back.png" alt="Back"></button>
+          <button class="thumb"><img data-src="/assets/products/essentials/onyx-hoodie/detail1.png" alt="Detail 1"></button>
+          <button class="thumb"><img data-src="/assets/products/essentials/onyx-hoodie/detail2.png" alt="Detail 2"></button>
+          <!-- Add more thumbs if you have more images -->
+        </div>
+      </section>
+
+      <!-- ============== DETAILS ============== -->
+      <section aria-label="Product details">
+        <h1 class="title">Onyx Black Hoodie</h1>
+        <div class="sub">Heavyweight fleece — Signature fit</div>
+        <div class="price">$88</div>
+
+        <!-- Colours (optional) -->
+        <!--
+        <div class="sub" style="margin-bottom:8px">Select Colour · Coffee</div>
+        <div class="chips" id="colorChips">
+          <button class="chip" aria-pressed="true" data-color="coffee">Coffee</button>
+          <button class="chip" aria-pressed="false" data-color="onyx">Onyx</button>
+        </div>
+        -->
+
+        <!-- Sizes -->
+        <div class="sub" style="margin-bottom:8px">Select Size</div>
+        <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
+          <button class="chip" data-val="XS">XS</button>
+          <button class="chip" data-val="S">S</button>
+          <button class="chip" data-val="M" aria-pressed="true">M</button>
+          <button class="chip" data-val="L">L</button>
+          <button class="chip" data-val="XL">XL</button>
+          <button class="chip" data-val="XXL">XXL</button>
+        </div>
+
+        <!-- CTA + Flags -->
+        <div class="cta">
+          <button class="btn" id="ctaBtn">Select a size</button>
+          <div class="flags">
+            <div class="flag"><span class="muted">🏁</span> Earn 88 Prestige Points</div>
+            <div class="flag"><span class="muted">🚚</span> Free shipping over $300</div>
+            <div class="flag"><span class="dot"></span> In stock</div>
+          </div>
+        </div>
+
+        <!-- Accordions -->
+        <div class="accordion">
+          <details>
+            <summary>Product Details <span class="muted">+</span></summary>
+            <div class="acc-body">
+              <p>• 80% Cotton / 20% Polyester, 450 GSM heavyweight fleece</p>
+              <p>• Kangaroo pocket, ribbed cuffs & hem</p>
+              <p>• Screenprinted LUTHER mark</p>
+              <p>• Model is 188cm / 75kg wearing size M</p>
+            </div>
+          </details>
+          <details>
+            <summary>Shipping & Returns <span class="muted">+</span></summary>
+            <div class="acc-body">
+              <p>• Ships worldwide. Free shipping on orders $300+.</p>
+              <p>• 14-day returns on unworn items with tags.</p>
+              <p>• Pre-order items ship on drop release.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999;">© LUTHER CLOTHING LIMITED · EST.2025</footer>
+
+  <script>
+    // ------- Gallery Logic -------
+    const imgs = [
+      "/assets/products/essentials/onyx-hoodie/front.png",
+      "/assets/products/essentials/onyx-hoodie/back.png",
+      "/assets/products/essentials/onyx-hoodie/detail1.png",
+      "/assets/products/essentials/onyx-hoodie/detail2.png"
+    ];
+    const hero = document.getElementById('heroImg');
+    const idxEl = document.getElementById('idx');
+    const totalEl = document.getElementById('total'); totalEl.textContent = imgs.length;
+    const thumbs = [...document.querySelectorAll('.thumb')];
+    let i = 0;
+
+    function show(n){
+      i = (n + imgs.length) % imgs.length;
+      hero.src = imgs[i];
+      idxEl.textContent = i + 1;
+      thumbs.forEach((t,k)=> t.setAttribute('aria-current', k===i ? 'true' : 'false'));
+    }
+    document.getElementById('prevBtn').addEventListener('click', ()=> show(i-1));
+    document.getElementById('nextBtn').addEventListener('click', ()=> show(i+1));
+    thumbs.forEach((btn,k)=>{
+      btn.addEventListener('click', ()=>{
+        const src = btn.querySelector('img').dataset.src;
+        const found = imgs.indexOf(src);
+        show(found>-1 ? found : k);
+      });
+    });
+
+    // ------- Size selector + CTA -------
+    const sizeChips = document.getElementById('sizeChips').querySelectorAll('.chip');
+    const ctaBtn = document.getElementById('ctaBtn');
+    let selectedSize = 'M';
+
+    sizeChips.forEach(ch=>{
+      if(ch.getAttribute('aria-pressed')==='true'){ selectedSize = ch.dataset.val; }
+      ch.addEventListener('click', ()=>{
+        sizeChips.forEach(b=>b.setAttribute('aria-pressed','false'));
+        ch.setAttribute('aria-pressed','true');
+        selectedSize = ch.dataset.val;
+        ctaBtn.textContent = `Join Wishlist — ${selectedSize}`;
+      });
+    });
+
+    ctaBtn.addEventListener('click', ()=>{
+      // Send them back to the homepage wishlist popup
+      window.location.href = '/index.html#wishlist';
+    });
+  </script>
+</body>
+</html>
