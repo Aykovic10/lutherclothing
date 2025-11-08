@@ -587,27 +587,31 @@
   </script>
 
   <script>
-  // Safety: ensure openWishlist is available for nav links
-  function openWishlist() {
-    const wishlistPopup = document.getElementById('wishlistPopup');
-    if (!wishlistPopup) return;
-    wishlistPopup.classList.add('open');
-    document.body.classList.add('menu-open');
-  }
-
-  // Close interactions
+  // Close interactions (no duplicate openWishlist here)
   document.addEventListener("DOMContentLoaded", () => {
-    const wishlistPopup = document.getElementById('wishlistPopup');
-    const closeBtns = [ document.getElementById('closeWishlistBtn'), document.getElementById('closeConfirmBtn') ];
+    const popup = document.getElementById('wishlistPopup');
+    const closeBtns = [
+      document.getElementById('closeWishlistBtn'),
+      document.getElementById('closeConfirmBtn')
+    ];
 
     function closeWishlist() {
-  const el = document.getElementById('wishlistPopup');
-  if (!el) return;
-  el.classList.remove('show');               // animate out
-  document.body.classList.remove('menu-open');
-  el.addEventListener('transitionend', () => {
-    el.style.display = 'none';               // fully hide after fade
-  }, { once:true });
+      if (!popup) return;
+      popup.classList.remove('show');         // animate out
+      document.body.classList.remove('menu-open');
+      popup.addEventListener('transitionend', () => {
+        popup.style.display = 'none';         // hide after fade
+      }, { once:true });
+    }
+
+    closeBtns.forEach(btn => btn && btn.addEventListener('click', closeWishlist));
+    popup.addEventListener('click', (e) => { if (e.target === popup) closeWishlist(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && popup.classList.contains('show')) closeWishlist();
+    });
+  });
+</script>
+});
 }
 
 
