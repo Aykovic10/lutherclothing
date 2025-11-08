@@ -6,16 +6,16 @@
   <title>LUTHER - Landing Page</title>
 
   <!-- Light mode favicons (use -b / black logos) -->
-  <link rel="icon" type="image/png" href="favicon-b.png" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32-b.png" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16-b.png" media="(prefers-color-scheme: light)">
-  <link rel="apple-touch-icon" href="apple-touch-icon-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" href="assets/icons/favicon-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16-b.png" media="(prefers-color-scheme: light)">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon-b.png" media="(prefers-color-scheme: light)">
 
   <!-- Dark mode favicons (use normal / white logos) -->
-  <link rel="icon" type="image/png" href="favicon.png" media="(prefers-color-scheme: dark)">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" media="(prefers-color-scheme: dark)">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" media="(prefers-color-scheme: dark)">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" media="(prefers-color-scheme: dark)">
 
   <!-- Self-hosted display font -->
   <link rel="preload" href="assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
@@ -158,7 +158,7 @@
 <body>
   <header id="header" style="background-color: transparent; backdrop-filter: none;">
     <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px; color: white; font-size: .8rem; font-weight: 300; text-transform: uppercase; text-decoration: none;">Instagram</a>
-    <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;" src="https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png" alt="Luther Logo">
+    <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;" src="assets/logos/lutherTextWhite.png" alt="Luther Logo">
     <div class="nav-links">
       <a href="#" id="productsBtn">Products</a>
       <a href="#" id="wishlistBtn">Wishlist</a>
@@ -288,12 +288,12 @@
     function setHeaderState(isTransparent) {
       if (isTransparent) {
         header.style.backgroundColor = 'transparent';
-        headerLogo.src = 'https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextWhite.png';
+        headerLogo.src = 'assets/logos/lutherTextWhite.png';
         document.querySelectorAll('header a').forEach(a => a.style.color = 'white');
         document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'white');
       } else {
         header.style.backgroundColor = 'white';
-        headerLogo.src = 'https://uploads.onecompiler.io/43vn54brk/43vn542r9/lutherTextBlack.png';
+        headerLogo.src = 'assets/logos/lutherTextBlack.png';
         document.querySelectorAll('header a').forEach(a => a.style.color = 'black');
         document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'black');
       }
