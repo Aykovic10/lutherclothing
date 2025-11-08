@@ -169,27 +169,27 @@
       .navArrow.right{ right:8px; }
     }
 
-    /* ====== WISHLIST POPUP ====== */
-    /* BEFORE */
-/* .wishlist-popup { ... display: none; } */
-/* .wishlist-popup.open { ... display: flex; } */
-
-/* AFTER */
+    
+/* Wishlist (match landing) */
 .wishlist-popup{
-  display: flex;                 /* always in the tree */
+  /* keep it in the DOM so it can animate */
   opacity: 0;
   visibility: hidden;
   transform: scale(.95);
   pointer-events: none;
   transition: opacity .4s ease, transform .4s ease, visibility .4s;
+  background: rgba(255,255,255,.05)
+              url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png')
+              no-repeat center/cover;
+  backdrop-filter: blur(8px);
 }
-
-.wishlist-popup.open{
+.wishlist-popup.show{
   opacity: 1;
   visibility: visible;
   transform: scale(1);
   pointer-events: auto;
 }
+
 
   </style>
 
@@ -303,7 +303,8 @@
   <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999;">© LUTHER CLOTHING LIMITED<br>EST.2025</footer>
 
   <!-- ====== WISHLIST POPUP (moved OUT of scripts, and fixed class toggle) ====== -->
-  <div class="wishlist-popup" id="wishlistPopup" style="position:fixed; inset:0; z-index:2000; justify-content:center; align-items:center;">
+  <div class="wishlist-popup" id="wishlistPopup"
+     style="position:fixed; inset:0; z-index:2000; justify-content:center; align-items:center; display:none;">
     <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
       <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
       <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
@@ -473,13 +474,15 @@
     });
   });
 
-  // ------- Wishlist popup open -------
-  // function openWishlist() {
-  //   const wishlistPopup = document.getElementById('wishlistPopup');
-  //   if (!wishlistPopup) return;
-  //   wishlistPopup.classList.add('open');
-  //   document.body.classList.add('menu-open');
-  // }
+  function openWishlist() {
+  const el = document.getElementById('wishlistPopup');
+  if (!el) return;
+  el.style.display = 'flex';                 // step 1: render
+  requestAnimationFrame(() => {              // step 2: let CSS animate
+    el.classList.add('show');                // (landing uses .show)
+  });
+  document.body.classList.add('menu-open');
+}
 
   // CTA opens wishlist
   ctaBtn.addEventListener('click', (e) => {
@@ -598,13 +601,21 @@
     const closeBtns = [ document.getElementById('closeWishlistBtn'), document.getElementById('closeConfirmBtn') ];
 
     function closeWishlist() {
-      wishlistPopup.classList.remove('open');
-      document.body.classList.remove('menu-open');
-    }
+  const el = document.getElementById('wishlistPopup');
+  if (!el) return;
+  el.classList.remove('show');               // animate out
+  document.body.classList.remove('menu-open');
+  el.addEventListener('transitionend', () => {
+    el.style.display = 'none';               // fully hide after fade
+  }, { once:true });
+}
+
 
     closeBtns.forEach(btn => btn && btn.addEventListener('click', closeWishlist));
     wishlistPopup.addEventListener('click', (e) => { if (e.target === wishlistPopup) closeWishlist(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && wishlistPopup.classList.contains('open')) closeWishlist(); });
+    document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && wishlistPopup.classList.contains('show')) closeWishlist();
+});
   });
   </script>
 </body>
