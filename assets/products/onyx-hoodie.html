@@ -18,6 +18,9 @@
 
   <!-- Self-hosted display font -->
   <link rel="preload" href="/assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" as="image" href="/assets/products/essentials/onyx-hoodie/front.png">
+  <link rel="preload" as="image" href="/assets/products/essentials/onyx-hoodie/back.png">
+
 
   <style>
     
@@ -221,16 +224,28 @@ main {
   transform: translateX(0);
   transition: transform 350ms ease;
   will-change: transform;
-  z-index:1; /* image layer */
+  z-index:1;
 }
 .slide{
-  position: relative;            /* <-- important: not absolute */
-  width:100%;
+  flex: 0 0 50%;   /* <- one slide = half the track = full frame width */
+  width:50%;
   height:100%;
+  display:block;
   object-fit: cover;
-  object-position:center;
+  object-position: center center;
   user-select:none;
   -webkit-user-drag: none;
+}
+/* While dragging, disable the transition so it follows the finger */
+.frame.dragging .slide-track{ transition:none; }
+
+@media (max-width: 980px){
+  .frame{ height: calc(100svh - 50px); }
+  .navArrow{
+    font-size:36px; width:44px; height:44px; z-index:5;
+  }
+  .navArrow.left{  left:8px; }
+  .navArrow.right{ right:8px; }
 }
 
 /* While dragging, disable the transition so it follows the finger */
@@ -326,10 +341,10 @@ main {
 
         <div class="sub" style="margin-bottom:8px">Select Size</div>
         <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
-  <button class="chip" data-val="S"  aria-pressed="false">S</button>
-  <button class="chip" data-val="M"  aria-pressed="false">M</button>
-  <button class="chip" data-val="L"  aria-pressed="false">L</button>
-  <button class="chip" data-val="XL" aria-pressed="false">XL</button>
+  <button class="chip" type="button" data-val="S"  aria-pressed="false">S</button>
+  <button class="chip" type="button" data-val="M"  aria-pressed="false">M</button>
+  <button class="chip" type="button" data-val="L"  aria-pressed="false">L</button>
+  <button class="chip" type="button" data-val="XL" aria-pressed="false">XL</button>
 </div>
 
 <div class="cta">
@@ -486,38 +501,44 @@ function endDrag(){
   const threshold = Math.min(120, fw()*0.2); // 20% width or 120px
 
   if (dx <= -threshold) {
-    // finish NEXT from current offset
-    track.style.transition = 'transform 250ms ease';
-    track.style.transform  = `translateX(${-fw()}px)`;
-    track.addEventListener('transitionend', function done(){
-      track.removeEventListener('transitionend', done);
-      setIndex(i + 1);
-      slideA.src = imgs[i];
-      track.style.transition = 'none';
-      track.style.transform  = 'translateX(0px)';
-      updateCounter();
-    }, { once:true });
-  } else if (dx >= threshold) {
-    // go PREV: put prev on left, jump to -fw, animate to 0
-    const prevIndex = (i - 1 + imgs.length) % imgs.length;
-    slideB.src = imgs[prevIndex]; // use B as left panel
+  // finish NEXT from current offset
+  animating = true;
+  track.style.transition = 'transform 250ms ease';
+  track.style.transform  = `translateX(${-fw()}px)`;
+  track.addEventListener('transitionend', function done(){
+    track.removeEventListener('transitionend', done);
+    setIndex(i + 1);
+    slideA.src = imgs[i];
     track.style.transition = 'none';
-    track.style.transform  = `translateX(${-fw()}px)`;
-    void track.offsetWidth;
-    track.style.transition = 'transform 250ms ease';
     track.style.transform  = 'translateX(0px)';
-    track.addEventListener('transitionend', function done(){
-      track.removeEventListener('transitionend', done);
-      setIndex(i - 1);
-      slideA.src = imgs[i];
-      track.style.transition = 'none';
-      track.style.transform  = 'translateX(0px)';
-      updateCounter();
-    }, { once:true });
-  } else {
-    // snap back
-    track.style.transition = 'transform 200ms ease';
+    animating = false;
+    updateCounter();
+  }, { once:true });
+
+} else if (dx >= threshold) {
+  // go PREV: put prev on left, jump to -fw, animate to 0
+  animating = true;
+  const prevIndex = (i - 1 + imgs.length) % imgs.length;
+  slideB.src = imgs[prevIndex]; // use B as left panel
+  track.style.transition = 'none';
+  track.style.transform  = `translateX(${-fw()}px)`;
+  void track.offsetWidth;
+  track.style.transition = 'transform 250ms ease';
+  track.style.transform  = 'translateX(0px)';
+  track.addEventListener('transitionend', function done(){
+    track.removeEventListener('transitionend', done);
+    setIndex(i - 1);
+    slideA.src = imgs[i];
+    track.style.transition = 'none';
     track.style.transform  = 'translateX(0px)';
+    animating = false;
+    updateCounter();
+  }, { once:true });
+
+} else {
+  // snap back
+  track.style.transition = 'transform 200ms ease';
+  track.style.transform  = 'translateX(0px)';
   }
 }
 
