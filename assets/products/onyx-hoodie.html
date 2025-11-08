@@ -96,6 +96,10 @@ body.menu-open { overflow: hidden; }
       .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 30px; z-index: 1002; }
     }
 
+    .logo-link{ display:inline-block; line-height:0; }
+    .logo-center{ display:block; } /* removes baseline gap */
+
+
     /* ====== LAYOUT ====== */
 main {
   max-width: 1280px;
@@ -300,10 +304,9 @@ main {
   <!-- ====== HEADER (copied from index) ====== -->
   <header id="header">
     <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px;">Instagram</a>
-    <a href="/index.html" style="display:inline-block">
+    <a href="/index.html" class="logo-link">
   <img id="headerLogo" class="logo-center" src="/assets/logos/lutherTextBlack.png" alt="Luther Logo">
 </a>
-
     <div class="nav-links">
       <a href="/index.html#productSection" id="productsBtn">Products</a>
       <a href="#wishlist" id="wishlistBtn">Wishlist</a>
@@ -342,7 +345,7 @@ main {
         <div class="sub">Heavyweight fleece — Signature fit</div>
         <div class="price">$88</div>
 
-        <div class="sub" style="margin-bottom:8 px">Select Size</div>
+        <div class="sub" style="margin-bottom:8px">Select Size</div>
         <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
   <button class="chip" type="button" data-val="S"  aria-pressed="false">S</button>
   <button class="chip" type="button" data-val="M"  aria-pressed="false">M</button>
@@ -625,10 +628,10 @@ sizeChips.forEach(chip => {
 function openWishlist() {
   const wishlistPopup = document.getElementById('wishlistPopup');
   if (!wishlistPopup) return;
-  wishlistPopup.style.display = 'flex';
+  wishlistPopup.classList.add('open');
   document.body.classList.add('menu-open');
-  requestAnimationFrame(()=> wishlistPopup.classList.add('show'));
 }
+
 
 // Guard (in case of stray clicks) then open
 ctaBtn.addEventListener('click', (e) => {
@@ -728,27 +731,21 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function closeWishlist() {
-    wishlistPopup.classList.remove('show');
+    wishlistPopup.classList.remove('open');
     document.body.classList.remove('menu-open');
-    setTimeout(() => wishlistPopup.style.display = 'none', 400);
   }
 
-  // Wire both close buttons
   closeBtns.forEach(btn => btn && btn.addEventListener('click', closeWishlist));
 
-  // Click outside the inner content closes (backdrop click)
   wishlistPopup.addEventListener('click', (e) => {
     if (e.target === wishlistPopup) closeWishlist();
   });
 
-  // Esc key closes
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && wishlistPopup.classList.contains('show')) closeWishlist();
+    if (e.key === 'Escape' && wishlistPopup.classList.contains('open')) closeWishlist();
   });
-
-  // Make sure popup is above header on this page
-  wishlistPopup.style.zIndex = '2000';
 });
+
 </script>
 
   <script>
@@ -806,10 +803,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function openWishlist() {
   const wishlistPopup = document.getElementById('wishlistPopup');
   if (!wishlistPopup) return;
-  wishlistPopup.style.display = 'flex';
+  wishlistPopup.classList.add('open');
   document.body.classList.add('menu-open');
-  requestAnimationFrame(() => wishlistPopup.classList.add('show'));
 }
+
 
 // Hook header + mobile "Wishlist" to open popup locally
 document.addEventListener('DOMContentLoaded', () => {
