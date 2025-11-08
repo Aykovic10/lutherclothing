@@ -94,12 +94,18 @@ body.menu-open { overflow: hidden; }
     }
 
     /* ====== LAYOUT ====== */
-main { padding-top: 50px; }
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0;
+  padding-top: 50px; /* to clear the header */
+}
+
 
 .split {
   display: grid;
   grid-template-columns: 642px 1fr;
-  gap: 60px; /* horizontal gap between image and details */
+  gap: 60px; /* space between image and product info */
 }
 
 @media (max-width: 980px) {
@@ -116,18 +122,13 @@ main { padding-top: 50px; }
   border: 0;
   border-radius: 0;
   padding: 0;
-
-  /* full-bleed inside a centered container: pull to viewport edges */
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
 }
 
 .frame {
-  /* full-bleed, sticks under header, fills viewport */
   position: sticky;
-  top: 0;                          /* content already starts below header (see main padding) */
-  height: calc(100vh - 50px);      /* header is 50px tall */
-  width: 100vw;                    /* span full viewport width */
+  top: 50px; /* sits just below the header */
+  height: calc(100vh - 50px); /* fills viewport height minus header */
+  width: 100%; /* stays inside its grid column */
   border-radius: 0;
   overflow: hidden;
   background: #f6f6f6;
@@ -135,14 +136,16 @@ main { padding-top: 50px; }
   padding: 0;
 }
 
+
 .frame img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;      /* no blank sides; fills the holder */
+  object-fit: cover;
   object-position: center;
 }
+
     .navArrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 42px; height: 42px; border: 1px solid #111; background: #fff;
