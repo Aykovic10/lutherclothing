@@ -120,11 +120,33 @@
   </script>
 </head>
 <body>
-  <header>
-    <div class="left"><a href="/index.html" aria-label="Back to shop">← Back</a></div>
-    <img class="logo" src="/assets/brand/lutherTextBlack.png" alt="LUTHER"/>
-    <div class="right"><a href="https://www.instagram.com/lutherclo/" target="_blank" rel="noopener">Instagram</a></div>
-  </header>
+  <header id="header" style="background-color: white; backdrop-filter: none;">
+  <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link"
+     style="position: absolute; left: 20px; color: black; font-size: .8rem; font-weight: 300; text-transform: uppercase; text-decoration: none;">
+    Instagram
+  </a>
+
+  <!-- same centered logo -->
+  <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;"
+       src="/assets/logos/lutherTextBlack.png" alt="Luther Logo" />
+
+  <div class="nav-links">
+    <!-- on product page these go back to the homepage sections -->
+    <a href="/index.html#productSection" id="productsBtn">Products</a>
+    <a href="/index.html#wishlist" id="wishlistBtn">Wishlist</a>
+  </div>
+
+  <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- MOBILE MENU (same look) -->
+<nav class="mobile-menu" id="mobileMenu">
+  <a href="https://www.instagram.com/lutherclo/" target="_blank">Instagram</a>
+  <a href="/index.html#productSection" id="mobileProductsBtn">Products</a>
+  <a href="/index.html#wishlist" id="mobileWishlistBtn">Wishlist</a>
+</nav>
 
   <main>
     <div class="split">
@@ -257,6 +279,47 @@
       // Send them back to the homepage wishlist popup
       window.location.href = '/index.html#wishlist';
     });
-  </script>
+  <script>
+// Product page header behavior (no hero here, so keep solid white header)
+const header = document.getElementById('header');
+const headerLogo = document.getElementById('headerLogo');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+// Set correct colors for product page (solid white / black text)
+function setHeaderSolid() {
+  header.style.backgroundColor = 'white';
+  headerLogo.src = '/assets/logos/lutherTextBlack.png';
+  document.querySelectorAll('header a').forEach(a => a.style.color = 'black');
+  document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'black');
+}
+setHeaderSolid();
+
+// Mobile menu
+function openMobileMenu() {
+  hamburger.classList.add('active');
+  hamburger.setAttribute('aria-expanded', 'true');
+  mobileMenu.style.display = 'flex';
+  document.body.classList.add('menu-open');
+  requestAnimationFrame(() => mobileMenu.classList.add('show'));
+}
+function closeMobileMenu() {
+  hamburger.classList.remove('active');
+  hamburger.setAttribute('aria-expanded', 'false');
+  mobileMenu.classList.remove('show');
+  document.body.classList.remove('menu-open');
+  setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+}
+hamburger.addEventListener('click', () => {
+  if (hamburger.classList.contains('active')) closeMobileMenu();
+  else openMobileMenu();
+});
+document.getElementById('mobileProductsBtn')?.addEventListener('click', closeMobileMenu);
+document.getElementById('mobileWishlistBtn')?.addEventListener('click', closeMobileMenu);
+
+// Make the centered logo click go home
+headerLogo.addEventListener('click', () => { window.location.href = '/index.html'; });
+</script>
+
 </body>
 </html>
