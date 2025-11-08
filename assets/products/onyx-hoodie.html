@@ -386,6 +386,88 @@ ctaBtn.addEventListener('click', openWishlist);
     </button>
   </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const wishlistPopup = document.getElementById('wishlistPopup');
+  const closeBtns = [
+    document.getElementById('closeWishlistBtn'),
+    document.getElementById('closeConfirmBtn')
+  ];
+
+  function closeWishlist() {
+    wishlistPopup.classList.remove('show');
+    document.body.classList.remove('menu-open');
+    setTimeout(() => wishlistPopup.style.display = 'none', 400);
+  }
+
+  // Wire both close buttons
+  closeBtns.forEach(btn => btn && btn.addEventListener('click', closeWishlist));
+
+  // Click outside the inner content closes (backdrop click)
+  wishlistPopup.addEventListener('click', (e) => {
+    if (e.target === wishlistPopup) closeWishlist();
+  });
+
+  // Esc key closes
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && wishlistPopup.classList.contains('show')) closeWishlist();
+  });
+
+  // Make sure popup is above header on this page
+  wishlistPopup.style.zIndex = '2000';
+});
+</script>
+
+  <script>
+function submitWishlistForm(form) {
+  const fd = new FormData(form);
+  const body = new URLSearchParams({
+    firstName: fd.get('firstName'),
+    lastName:  fd.get('lastName'),
+    email:     fd.get('email'),
+    phone:     fd.get('phone')
+  });
+
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
+
+  const loading = document.getElementById('loadingMessage');
+  const confirm  = document.getElementById('confirmationMessage');
+
+  // hide form, show loader
+  form.style.display = 'none';
+  loading.style.display = 'block';
+
+  fetch(WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body
+  })
+  .then(r => r.json())
+  .then(result => {
+    loading.style.display = 'none';
+    if (result.status === 'success') {
+      confirm.style.display = 'block';
+    } else {
+      alert('Error: ' + result.message);
+      form.style.display = 'flex';
+    }
+  })
+  .catch(err => {
+    console.error('Fetch error:', err);
+    alert('Error submitting form.');
+    loading.style.display = 'none';
+    form.style.display = 'flex';
+  });
+}
+
+// Optional: IG button (already has id on your HTML)
+document.addEventListener('DOMContentLoaded', () => {
+  const igBtn = document.getElementById('followIgBtn');
+  if (igBtn) igBtn.addEventListener('click', () => {
+    window.open('https://www.instagram.com/lutherclo/', '_blank');
+  });
+});
+</script>
 
 </body>
 </html>
