@@ -1,119 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Onyx Black Hoodie — LUTHER</title>
-<style>
-/* === Base Reset === */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: system-ui, sans-serif; background: #FAF9F6; color: #111; }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Onyx Black Hoodie — LUTHER</title>
 
-/* === Header === */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  z-index: 1000;
-  padding: 0 24px;
-  transition: height 0.3s ease, padding 0.3s ease;
-}
-.logo-center {
-  height: 20px;
-  cursor: pointer;
-}
-.nav-links {
-  position: absolute;
-  right: 24px;
-  display: flex;
-  gap: 16px;
-}
-header a {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: #111;
-  font-weight: 400;
-}
-.hamburger {
-  display: none;
-  position: absolute;
-  right: 16px;
-  width: 28px;
-  height: 18px;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-}
-.hamburger span {
-  display: block;
-  height: 2px;
-  background: #000;
-  border-radius: 1px;
-}
+  <!-- Light mode favicons (use -b / black logos) -->
+  <link rel="icon" type="image/png" href="/assets/icons/favicon-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16-b.png" media="(prefers-color-scheme: light)">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-b.png" media="(prefers-color-scheme: light)">
 
-/* === Mobile Header Consistent Height === */
-@media (max-width: 768px) {
-  header {
-    height: 50px; /* same height as desktop */
-    padding: 0 20px;
+  <!-- Dark mode favicons (use normal / white logos) -->
+  <link rel="icon" type="image/png" href="/assets/icons/favicon.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" media="(prefers-color-scheme: dark)">
+
+  <!-- Self-hosted display font -->
+  <link rel="preload" href="/assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" as="image" href="/assets/products/essentials/onyx-hoodie/front.png">
+  <link rel="preload" as="image" href="/assets/products/essentials/onyx-hoodie/back.png">
+
+  <style>
+    /* ====== TYPE ====== */
+    @font-face {
+      font-family: 'LutherHeavy';
+      src: url('/assets/fonts/futura-heavy.otf') format('opentype');
+      font-weight: 900; font-style: normal; font-display: swap;
+    }
+    :root{
+      --bg: #FAF9F6;
+      --text: #111;
+      --muted: #6b6b6b;
+      --line: #e9e9e9;
+      --ok: #16a34a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:inherit;text-decoration:none}
+
+    /* ====== HEADER (same layout as index) ====== */
+    header {
+      position: fixed; top: 0; width: 100%; height: 50px;
+      padding: 0 40px; display: flex; justify-content: center; align-items: center;
+      z-index: 1001; background-color: white; transition: background-color .3s ease;
+    }
+    .nav-links { position: absolute; right: 40px; display: flex; gap: 16px; }
+    header a { text-decoration: none; color: black; font-weight: 300; text-transform: uppercase; font-size: .8rem; position: relative; }
+    .logo-center { height: 20px; max-height: 20px; transition: opacity .3s ease; cursor: pointer; }
+    .hamburger { display: none; flex-direction: column; justify-content: center; width: 30px; height: 25px; cursor: pointer; position: absolute; right: 20px; gap: 4px; z-index: 1002; }
+    .hamburger span { background: black; height: 1px; width: 100%; transition: all .3s ease; }
+    .hamburger span:nth-child(3) { display: none; }
+
+    /* Mobile menu (same as index) */
+    .mobile-menu {
+      display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px);
+      background: rgba(0, 0, 0, 0.65) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center center / cover;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; justify-content: center; align-items: center; gap: 30px; z-index: 1000;
+      opacity: 0; visibility: hidden; transform: translateY(-100%);
+      transition: opacity .4s, transform .4s, visibility .4s;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    .mobile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+    .mobile-menu a {
+      color: white; text-decoration: none; font-size: 1.2rem; text-transform: uppercase; font-weight: 300; padding: 10px; letter-spacing: 0.05em; transition: all 0.3s ease; text-shadow: 0 0 5px rgba(0,0,0,.3);
+    }
+    body.menu-open { overflow: hidden; }
+
+    @media (max-width: 768px) {
+      header { padding: 0 20px; z-index: 1001; }
+      .instagram-link { display: none; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 30px; z-index: 1002; }
+    }
+
+    .logo-link{ display:inline-block; line-height:0; }
+    .logo-center{ display:block; } /* removes baseline gap */
+
+    /* ====== LAYOUT ====== */
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0;
+      padding-top: 50px; /* to clear the header */
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 642px 1fr;
+      gap: 60px; /* space between image and product info */
+    }
+
+    @media (max-width: 980px) {
+      .split { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    .gallery { position: relative; background: transparent; border: 0; border-radius: 0; padding: 0; }
+
+    .frame {
+      position: sticky;
+      top: 50px; /* sits just below the header */
+      height: calc(100vh - 50px); /* fills viewport height minus header */
+      width: 100%;
+      overflow: hidden;
+      background: #f6f6f6;
+      margin: 0; padding: 0;
+    }
+
+    .navArrow{
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: transparent; border: 0; box-shadow: none; padding: 0;
+      font-size: 42px; line-height: 1; color: #111; opacity: .7; cursor: pointer;
+      width: 42px; height: 42px; display: grid; place-items: center; z-index: 2;
+    }
+    .navArrow:hover { opacity: 1; }
+    .navArrow.left  { left: 12px; }
+    .navArrow.right { right: 12px; }
+
+    @keyframes slideInFromLeft { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInFromRight{ from { opacity: 0; transform: translateX(24px); }  to { opacity: 1; transform: translateX(0); } }
+
+    .slide-in-left  { animation: slideInFromLeft 280ms ease both; }
+    .slide-in-right { animation: slideInFromRight 280ms ease both; }
+
+    .count{position:absolute;left:16px;bottom:12px;font-size:.9rem;color:var(--muted)}
+
+    .thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+    .thumb{aspect-ratio:3/4;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:#f1f1f1}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .thumb[aria-current="true"]{border-color:#000}
+
+    /* ====== DETAILS ====== */
+    .title{font-family:'LutherHeavy',inherit;font-size:2rem;line-height:1.1;margin:0 0 6px}
+    .sub{color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:.8rem;margin-bottom:14px}
+    .price{font-weight:600;margin-bottom:18px}
+
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .chip{ min-width:60px; text-align:center; padding:12px 14px; font-size:.85rem; border:1px solid var(--line); background:#fff; cursor:pointer; border-radius:6px; }
+    .chip[disabled]{opacity:.35;cursor:not-allowed}
+    .chip[aria-pressed="true"]{border-color:#000}
+
+    .cta{position:sticky;top:80px;display:flex;flex-direction:column;gap:10px;margin:18px 0}
+    .btn{ padding:14px 16px;text-transform:uppercase;border:1px solid #000;background:#000;color:#fff;cursor:pointer;border-radius:8px; }
+    .flags{display:flex;flex-direction:column;gap:8px;background:#f6f6f6;border:1px solid var(--line);border-radius:8px;padding:12px}
+    .flag{display:flex;align-items:center;gap:10px;font-size:.9rem;color:#333}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+
+    /* ====== ACCORDIONS ====== */
+    .accordion{border-top:1px solid var(--line);margin-top:16px}
+    details{border-bottom:1px solid var(--line);padding:14px 0}
+    summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+    summary::marker{display:none}
+    .acc-body{color:#333;font-size:.95rem;padding-top:10px;line-height:1.6}
+
+    /* ====== SLIDER ====== */
+    .slide-track{ position:absolute; inset:0; display:flex; width:200%; height:100%; transform: translateX(0); transition: transform 350ms ease; will-change: transform; z-index:1; }
+    .slide{ flex: 0 0 50%; width:50%; height:100%; display:block; object-fit: cover; object-position: center center; user-select:none; -webkit-user-drag: none; }
+    .frame.dragging .slide-track{ transition:none; }
+
+    @media (max-width: 980px){
+      .frame{ height: calc(100svh - 50px); }
+      .navArrow{ font-size:36px; width:44px; height:44px; z-index:5; }
+      .navArrow.left{  left:8px; }
+      .navArrow.right{ right:8px; }
+    }
+
+    /* ====== WISHLIST POPUP ====== */
+    .wishlist-popup {
+      opacity: 0; visibility: hidden; transform: scale(.95);
+      transition: opacity .4s ease, transform .4s ease, visibility .4s;
+      background: rgba(0,0,0,.65) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center/cover;
+      backdrop-filter: blur(8px);
+      display: none; /* default hidden */
+    }
+    .wishlist-popup.open { opacity: 1; visibility: visible; transform: scale(1); display: flex; }
+  </style>
+
+  <!-- SEO: Product JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Product",
+    "name":"Onyx Black Hoodie",
+    "image":[
+      "/assets/products/essentials/onyx-hoodie/front.png",
+      "/assets/products/essentials/onyx-hoodie/back.png"
+    ],
+    "description":"Heavyweight fleece — Signature fit",
+    "brand":{"@type":"Brand","name":"LUTHER"},
+    "offers":{
+      "@type":"Offer",
+      "priceCurrency":"USD",
+      "price":"88",
+      "availability":"https://schema.org/PreOrder",
+      "url":"https://www.lutherclothing.com/assets/products/onyx-hoodie.html"
+    }
   }
-  .logo-center {
-    height: 20px; /* keep same as desktop */
-  }
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-  .mobile-menu {
-    position: fixed;
-    top: 50px; /* align under same-height header */
-    left: 0;
-    width: 100%;
-    height: calc(100% - 50px);
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.9);
-    color: white;
-  }
-  .mobile-menu.show { display: flex; }
-  .mobile-menu a {
-    color: white;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    margin: 10px 0;
-    text-decoration: none;
-  }
-}
-</style>
+  </script>
 </head>
 <body>
-  <header>
-    <a href="https://www.instagram.com/lutherclo/" class="instagram-link" style="position:absolute; left:16px;">Instagram</a>
-    <img src="/assets/logos/lutherTextBlack.png" alt="LUTHER Logo" class="logo-center" />
+  <!-- ====== HEADER ====== -->
+  <header id="header">
+    <a href="https://www.instagram.com/lutherclo/" target="_blank" class="instagram-link" style="position: absolute; left: 20px;">Instagram</a>
+    <a href="/index.html" class="logo-link">
+      <img id="headerLogo" class="logo-center" src="/assets/logos/lutherTextBlack.png" alt="Luther Logo">
+    </a>
     <div class="nav-links">
-      <a href="#products">Products</a>
-      <a href="#wishlist">Wishlist</a>
+      <a href="/index.html#productSection" id="productsBtn">Products</a>
+      <a href="#wishlist" id="wishlistBtn">Wishlist</a>
     </div>
-    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </div>
   </header>
 
+  <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="#products">Products</a>
-    <a href="#wishlist">Wishlist</a>
+    <a href="https://www.instagram.com/lutherclo/" target="_blank">Instagram</a>
+    <a href="/index.html#productSection" id="mobileProductsBtn">Products</a>
+    <a href="/index.html#wishlist" id="mobileWishlistBtn">Wishlist</a>
   </nav>
 
+  <main>
+    <div class="split">
+      <!-- ============== GALLERY ============== -->
+      <section class="gallery" aria-label="Product gallery">
+        <div class="frame">
+          <div class="slide-track" id="slideTrack">
+            <img class="slide" id="slideA" src="/assets/products/essentials/onyx-hoodie/front.png" alt="Onyx Black Hoodie front">
+            <img class="slide" id="slideB" src="/assets/products/essentials/onyx-hoodie/back.png"  alt="Onyx Black Hoodie back">
+          </div>
+
+          <button class="navArrow left" id="prevBtn" aria-label="Previous image" type="button">‹</button>
+          <button class="navArrow right" id="nextBtn" aria-label="Next image" type="button">›</button>
+          <div class="count"><span id="idx">1</span> / <span id="total"></span></div>
+        </div>
+      </section>
+
+      <!-- ============== DETAILS ============== -->
+      <section aria-label="Product details">
+        <h1 class="title">Onyx Black Hoodie</h1>
+        <div class="sub">Heavyweight fleece — Signature fit</div>
+        <div class="price">$88</div>
+
+        <div class="sub" style="margin-bottom:8px">Select Size</div>
+        <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
+          <button class="chip" type="button" data-val="S"  aria-pressed="false">S</button>
+          <button class="chip" type="button" data-val="M"  aria-pressed="false">M</button>
+          <button class="chip" type="button" data-val="L"  aria-pressed="false">L</button>
+          <button class="chip" type="button" data-val="XL" aria-pressed="false">XL</button>
+        </div>
+
+        <div class="cta">
+          <button class="btn" id="ctaBtn" disabled>Select a size</button>
+          <div class="flags">
+            <div class="flag"><span class="muted">🏁</span> Earn 88 Prestige Points</div>
+            <div class="flag"><span class="muted">🚚</span> Free shipping over $300</div>
+            <div class="flag"><span class="dot"></span> In stock</div>
+          </div>
+        </div>
+
+        <div class="accordion">
+          <details>
+            <summary>Product Details <span class="muted">+</span></summary>
+            <div class="acc-body">
+              <p>• 80% Cotton / 20% Polyester, 450 GSM heavyweight fleece</p>
+              <p>• Kangaroo pocket, ribbed cuffs & hem</p>
+              <p>• Screenprinted LUTHER mark</p>
+              <p>• Model is 188cm / 75kg wearing size M</p>
+            </div>
+          </details>
+          <details>
+            <summary>Shipping & Returns <span class="muted">+</span></summary>
+            <div class="acc-body">
+              <p>• Ships worldwide. Free shipping on orders $300+.</p>
+              <p>• 14-day returns on unworn items with tags.</p>
+              <p>• Pre-order items ship on drop release.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999;">© LUTHER CLOTHING LIMITED<br>EST.2025</footer>
+
+  <!-- ====== WISHLIST POPUP (moved OUT of scripts, and fixed class toggle) ====== -->
+  <div class="wishlist-popup" id="wishlistPopup" style="position:fixed; inset:0; z-index:2000; justify-content:center; align-items:center;">
+    <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
+      <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
+      <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
+      <input type="text" name="firstName" placeholder="First Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 8px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="text" name="lastName" placeholder="Last Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 5px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="email" name="email" placeholder="Email Address" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+      <div style="display: flex; width: 100%; gap: 10px;">
+        <button type="submit" style="width: 75%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
+        <button type="button" id="closeWishlistBtn" style="width: 25%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+      </div>
+      <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
+    </form>
+
+    <!-- Loading -->
+    <div id="loadingMessage" style="display:none; text-align:center; color:white; font-weight:300; font-size:.9rem; max-width:400px; padding:0 20px;">
+      <p style="margin-bottom:10px;">Saving your spot...</p>
+      <div style="border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; animation: spin 1s linear infinite;"></div>
+    </div>
+
+    <!-- Confirmation -->
+    <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
+      <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
+      <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
+      <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
+
+      <button type="button" id="followIgBtn" style="margin-top: 20px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
+        Follow Our Instagram
+      </button>
+
+      <button type="button" id="closeConfirmBtn" style="margin-top: 24px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- ====== SCRIPTS ====== -->
   <script>
+  // ------- Gallery Logic (real slide) -------
+  const imgs = [
+    "/assets/products/essentials/onyx-hoodie/front.png",
+    "/assets/products/essentials/onyx-hoodie/back.png"
+  ];
+
+  const track  = document.getElementById('slideTrack');
+  const slideA = document.getElementById('slideA');
+  const slideB = document.getElementById('slideB');
+  const idxEl  = document.getElementById('idx');
+  const totalEl= document.getElementById('total'); totalEl.textContent = imgs.length;
+
+  const frameEl = document.querySelector('.frame');
+
+  let i = 0;                 // current index shown in slideA
+  let animating = false;     // lock during transitions
+  let dragging = false;
+  let startX = 0;
+  let currentX = 0;
+
+  function setIndex(n){ i = (n + imgs.length) % imgs.length; }
+  function updateCounter(){ idxEl.textContent = i + 1; }
+  function fw(){ return frameEl.clientWidth; }
+
+  function slideNext() {
+    if (animating) return; animating = true;
+    const nextIndex = (i + 1) % imgs.length;
+    slideA.src = imgs[i];
+    slideB.src = imgs[nextIndex];
+    track.style.transition = 'none';
+    track.style.transform  = 'translateX(0px)';
+    void track.offsetWidth;
+    track.style.transition = 'transform 350ms ease';
+    track.style.transform  = `translateX(${-fw()}px)`;
+    track.addEventListener('transitionend', function done(){
+      track.removeEventListener('transitionend', done);
+      setIndex(i + 1);
+      slideA.src = imgs[i];
+      track.style.transition = 'none';
+      track.style.transform  = 'translateX(0px)';
+      animating = false; updateCounter();
+    }, { once:true });
+  }
+
+  function slidePrev() {
+    if (animating) return; animating = true;
+    const prevIndex = (i - 1 + imgs.length) % imgs.length;
+    slideA.src = imgs[prevIndex];
+    slideB.src = imgs[i];
+    track.style.transition = 'none';
+    track.style.transform  = `translateX(${-fw()}px)`;
+    void track.offsetWidth;
+    track.style.transition = 'transform 350ms ease';
+    track.style.transform  = 'translateX(0px)';
+    track.addEventListener('transitionend', function done(){
+      track.removeEventListener('transitionend', done);
+      setIndex(i - 1);
+      slideA.src = imgs[i];
+      track.style.transition = 'none';
+      track.style.transform  = 'translateX(0px)';
+      animating = false; updateCounter();
+    }, { once:true });
+  }
+
+  // init
+  slideA.src = imgs[i];
+  slideB.src = imgs[(i+1)%imgs.length];
+  updateCounter();
+
+  // arrows
+  document.getElementById('prevBtn').addEventListener('click', slidePrev);
+  document.getElementById('nextBtn').addEventListener('click', slideNext);
+
+  let dragMode = null; // 'next' or 'prev'
+
+  function startDrag(x){ if (animating) return; dragging = true; startX = x; currentX = x; dragMode = null; frameEl.classList.add('dragging'); track.style.transition = 'none'; }
+  function moveDrag(x){
+    if (!dragging) return; currentX = x; const dx = currentX - startX; const w = fw();
+    if (dx < 0) {
+      if (dragMode !== 'next') { slideA.src = imgs[i]; slideB.src = imgs[(i + 1) % imgs.length]; track.style.transition = 'none'; track.style.transform  = 'translateX(0px)'; dragMode = 'next'; }
+      track.style.transform = `translateX(${dx}px)`;
+    } else if (dx > 0) {
+      const prevIndex = (i - 1 + imgs.length) % imgs.length;
+      if (dragMode !== 'prev') { slideA.src = imgs[prevIndex]; slideB.src = imgs[i]; track.style.transition = 'none'; track.style.transform  = `translateX(${-w}px)`; dragMode = 'prev'; }
+      track.style.transform = `translateX(${-w + dx}px)`;
+    } else {
+      if (!dragMode) { slideA.src = imgs[i]; slideB.src = imgs[(i + 1) % imgs.length]; track.style.transform = 'translateX(0px)'; }
+    }
+  }
+  function endDrag(){
+    if (!dragging) return; dragging = false; frameEl.classList.remove('dragging');
+    const dx = currentX - startX; const w = fw(); const threshold = Math.min(120, w * 0.2);
+    if (dragMode === 'next') {
+      if (dx <= -threshold) { animating = true; track.style.transition = 'transform 250ms ease'; track.style.transform  = `translateX(${-w}px)`; track.addEventListener('transitionend', function done(){ track.removeEventListener('transitionend', done); setIndex(i + 1); slideA.src = imgs[i]; track.style.transition = 'none'; track.style.transform  = 'translateX(0px)'; animating = false; updateCounter(); }, { once:true }); }
+      else { track.style.transition = 'transform 200ms ease'; track.style.transform  = 'translateX(0px)'; }
+    } else if (dragMode === 'prev') {
+      if (dx >= threshold) { animating = true; track.style.transition = 'transform 250ms ease'; track.style.transform  = 'translateX(0px)'; track.addEventListener('transitionend', function done(){ track.removeEventListener('transitionend', done); setIndex(i - 1); slideA.src = imgs[i]; track.style.transition = 'none'; track.style.transform  = 'translateX(0px)'; animating = false; updateCounter(); }, { once:true }); }
+      else { track.style.transition = 'transform 200ms ease'; track.style.transform  = `translateX(${-w}px)`; track.addEventListener('transitionend', function back(){ track.removeEventListener('transitionend', back); track.style.transition = 'none'; track.style.transform = 'translateX(0px)'; }, { once:true }); }
+    } else { track.style.transition = 'transform 200ms ease'; track.style.transform  = 'translateX(0px)'; }
+  }
+
+  // touch
+  frameEl.addEventListener('touchstart', (e)=> startDrag(e.touches[0].clientX), { passive:true });
+  frameEl.addEventListener('touchmove',  (e)=> moveDrag(e.touches[0].clientX),  { passive:true });
+  frameEl.addEventListener('touchend',   endDrag, { passive:true });
+
+  // mouse
+  frameEl.addEventListener('mousedown', (e)=> startDrag(e.clientX));
+  window.addEventListener('mousemove',  (e)=> moveDrag(e.clientX));
+  window.addEventListener('mouseup',    endDrag);
+  </script>
+
+  <script>
+  // ------- Size selector + CTA -------
+  const sizeChips = document.querySelectorAll('#sizeChips .chip');
+  const ctaBtn = document.getElementById('ctaBtn');
+  let selectedSize = null; // no default
+
+  ctaBtn.disabled = true;
+  ctaBtn.textContent = 'Select a size';
+
+  sizeChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      sizeChips.forEach(b => b.setAttribute('aria-pressed', 'false'));
+      chip.setAttribute('aria-pressed', 'true');
+      selectedSize = chip.dataset.val;
+      ctaBtn.disabled = false;
+      ctaBtn.textContent = `Join Wishlist — ${selectedSize}`;
+    });
+  });
+
+  // ------- Wishlist popup open -------
+  function openWishlist() {
+    const wishlistPopup = document.getElementById('wishlistPopup');
+    if (!wishlistPopup) return;
+    wishlistPopup.classList.add('open');
+    document.body.classList.add('menu-open');
+  }
+
+  // CTA opens wishlist
+  ctaBtn.addEventListener('click', (e) => {
+    if (ctaBtn.disabled || !selectedSize) { e.preventDefault(); return; }
+    openWishlist();
+  });
+
+  // ------- Header / Mobile menu -------
+  const headerEl = document.getElementById('header');
+  const headerLogo = document.getElementById('headerLogo');
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
+
+  headerLogo.addEventListener('click', () => { window.location.href = '/index.html'; });
+
+  function openMobileMenu() {
+    hamburger.classList.add('active');
+    hamburger.setAttribute('aria-expanded', 'true');
+    mobileMenu.style.display = 'flex';
+    document.body.classList.add('menu-open');
+    requestAnimationFrame(() => mobileMenu.classList.add('show'));
+  }
+  function closeMobileMenu() {
+    hamburger.classList.remove('active');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileMenu.classList.remove('show');
+    document.body.classList.remove('menu-open');
+    setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+  }
   hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('show');
+    if (hamburger.classList.contains('active')) closeMobileMenu();
+    else openMobileMenu();
+  });
+  document.getElementById('mobileProductsBtn')?.addEventListener('click', closeMobileMenu);
+  document.getElementById('mobileWishlistBtn')?.addEventListener('click', closeMobileMenu);
+
+  // ------- Hook header + mobile "Wishlist" to open popup locally -------
+  document.addEventListener('DOMContentLoaded', () => {
+    const headerWishlist = document.getElementById('wishlistBtn');
+    const mobileWishlist = document.getElementById('mobileWishlistBtn');
+
+    function openFromNav(e){
+      e.preventDefault();
+      if (hamburger && hamburger.classList.contains('active')) closeMobileMenu();
+      openWishlist();
+    }
+
+    headerWishlist?.addEventListener('click', openFromNav);
+    mobileWishlist?.addEventListener('click', openFromNav);
+  });
+  </script>
+
+  <script>
+  function submitWishlistForm(form) {
+    const fd = new FormData(form);
+    const body = new URLSearchParams({
+      firstName: fd.get('firstName'),
+      lastName:  fd.get('lastName'),
+      email:     fd.get('email'),
+      phone:     fd.get('phone')
+    });
+
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygTVpkkE9l4QQ0zk7hVQXvdwQ_8Ce1Mxjz5axXkKjsul6LVwBrCqYOYQN7Lyx3N4T0/exec';
+
+    const loading = document.getElementById('loadingMessage');
+    const confirm  = document.getElementById('confirmationMessage');
+
+    // hide form, show loader
+    form.style.display = 'none';
+    loading.style.display = 'block';
+
+    fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    })
+    .then(r => r.json())
+    .then(result => {
+      loading.style.display = 'none';
+      if (result.status === 'success') {
+        confirm.style.display = 'block';
+      } else {
+        alert('Error: ' + result.message);
+        form.style.display = 'flex';
+      }
+    })
+    .catch(err => {
+      console.error('Fetch error:', err);
+      alert('Error submitting form.');
+      loading.style.display = 'none';
+      form.style.display = 'flex';
+    });
+  }
+
+  // Optional: IG button
+  document.addEventListener('DOMContentLoaded', () => {
+    const igBtn = document.getElementById('followIgBtn');
+    if (igBtn) igBtn.addEventListener('click', () => {
+      window.open('https://www.instagram.com/lutherclo/', '_blank');
+    });
+  });
+  </script>
+
+  <script>
+  // Safety: ensure openWishlist is available for nav links
+  function openWishlist() {
+    const wishlistPopup = document.getElementById('wishlistPopup');
+    if (!wishlistPopup) return;
+    wishlistPopup.classList.add('open');
+    document.body.classList.add('menu-open');
+  }
+
+  // Close interactions
+  document.addEventListener("DOMContentLoaded", () => {
+    const wishlistPopup = document.getElementById('wishlistPopup');
+    const closeBtns = [ document.getElementById('closeWishlistBtn'), document.getElementById('closeConfirmBtn') ];
+
+    function closeWishlist() {
+      wishlistPopup.classList.remove('open');
+      document.body.classList.remove('menu-open');
+    }
+
+    closeBtns.forEach(btn => btn && btn.addEventListener('click', closeWishlist));
+    wishlistPopup.addEventListener('click', (e) => { if (e.target === wishlistPopup) closeWishlist(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && wishlistPopup.classList.contains('open')) closeWishlist(); });
   });
   </script>
 </body>
