@@ -237,6 +237,24 @@ main {
 .frame.dragging .slide-track{
   transition: none;
 }
+    /* Make sure images are perfectly centered and block-level */
+.slide{ display:block; }
+
+/* On mobile, account for browser UI and keep arrows comfortably inside */
+@media (max-width: 980px){
+  .frame{
+    height: calc(100svh - 50px); /* better on mobile than 100vh */
+  }
+  .navArrow{
+    font-size: 36px;
+    width: 44px;
+    height: 44px;
+    z-index: 5;            /* make extra-sure they sit above the image */
+  }
+  .navArrow.left{  left: 8px; }
+  .navArrow.right{ right: 8px; }
+}
+
 
     
   </style>
@@ -349,7 +367,6 @@ main {
   <footer style="text-align:center; padding:40px 20px; font-size:.75rem; font-weight:300; text-transform:uppercase; color:#999;">© LUTHER CLOTHING LIMITED<br>EST.2025</footer>
 
   <script>
-<script>
 // ------- Gallery Logic (real slide) -------
 const imgs = [
   "/assets/products/essentials/onyx-hoodie/front.png",
@@ -513,7 +530,8 @@ frameEl.addEventListener('touchend',   endDrag, { passive:true });
 frameEl.addEventListener('mousedown', (e)=> startDrag(e.clientX));
 window.addEventListener('mousemove',  (e)=> moveDrag(e.clientX));
 window.addEventListener('mouseup',    endDrag);
-
+  </script>
+  <script>
 
 // ------- Size selector + CTA -------
 const sizeChips = document.querySelectorAll('#sizeChips .chip');
