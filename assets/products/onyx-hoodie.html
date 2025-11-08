@@ -4,11 +4,40 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Onyx Black Hoodie — LUTHER</title>
+  <!-- Light mode favicons (use -b / black logos) -->
+<link rel="icon" type="image/png" href="/assets/icons/favicon-b.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32-b.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16-b.png" media="(prefers-color-scheme: light)">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-b.png" media="(prefers-color-scheme: light)">
+
+<!-- Dark mode favicons (use normal / white logos) -->
+<link rel="icon" type="image/png" href="/assets/icons/favicon.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" media="(prefers-color-scheme: dark)">
 
   <!-- Self-hosted display font -->
   <link rel="preload" href="/assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
 
   <style>
+    
+
+    /* Wishlist popup */
+.wishlist-popup {
+  opacity: 0; visibility: hidden; transform: scale(.95);
+  transition: opacity .4s ease, transform .4s ease, visibility .4s;
+  background: rgba(255,255,255,.05) url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png') no-repeat center/cover;
+  backdrop-filter: blur(8px);
+}
+.wishlist-popup.show { opacity: 1; visibility: visible; transform: scale(1); }
+
+/* Prevent body scroll when menu/popup is open (already used by mobile menu) */
+body.menu-open { overflow: hidden; }
+
+/* Simple spinner */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    
     /* ====== TYPE ====== */
     @font-face {
       font-family: 'LutherHeavy';
@@ -281,9 +310,14 @@
       });
     });
 
-    ctaBtn.addEventListener('click', ()=>{
-      window.location.href = '/index.html#wishlist';
-    });
+    // Open the popup (same as landing page) instead of redirect
+function openWishlist() {
+  const wishlistPopup = document.getElementById('wishlistPopup');
+  wishlistPopup.style.display = 'flex';
+  document.body.classList.add('menu-open');
+  requestAnimationFrame(()=> wishlistPopup.classList.add('show'));
+}
+ctaBtn.addEventListener('click', openWishlist);
 
     /* ------- Product header behavior (solid white) ------- */
     const headerEl = document.getElementById('header');
@@ -315,5 +349,43 @@
     document.getElementById('mobileProductsBtn')?.addEventListener('click', closeMobileMenu);
     document.getElementById('mobileWishlistBtn')?.addEventListener('click', closeMobileMenu);
   </script>
+  <!-- WISHLIST POPUP (same as landing) -->
+<div class="wishlist-popup" id="wishlistPopup" style="position: fixed; top: 0; left: 0; width: 1000vw; height: 1000vh; display: none; z-index: 998; display: flex; justify-content: center; align-items: center; transform: translate(-450vw, -450vh);">
+  <form id="wishlistForm" style="margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 400px; padding: 0 20px;" onsubmit="event.preventDefault(); submitWishlistForm(this);">
+    <h2 style="text-transform: uppercase; font-weight: 300; margin-bottom: 5px; font-size: .8rem; color: white;">The Wishlist</h2>
+    <p style="margin-bottom: 20px; font-size: .8rem; color: white; font-weight: 300; text-transform: uppercase;">Sign up for exclusive access</p>
+    <input type="text" name="firstName" placeholder="First Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 8px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+    <input type="text" name="lastName" placeholder="Last Name" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 5px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+    <input type="email" name="email" placeholder="Email Address" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+    <input type="tel" name="phone" placeholder="Phone Number" required style="background: transparent; border: none; border-bottom: 1px solid white; padding: 10px; margin-bottom: 15px; color: white; width: 100%; font-size: .8rem; font-weight: 300;">
+    <div style="display: flex; width: 100%; gap: 10px;">
+      <button type="submit" style="width: 75%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Sign Up</button>
+      <button type="button" id="closeWishlistBtn" style="width: 25%; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">Close</button>
+    </div>
+    <p style="font-size:.6rem; margin-top: 20px; color: white; text-transform: uppercase; font-weight: 300;">By submitting this form, you accept the <a href="#" style="color: white; text-decoration: underline;">Terms & Conditions</a></p>
+  </form>
+
+  <!-- Loading -->
+  <div id="loadingMessage" style="display:none; text-align:center; color:white; font-weight:300; font-size:.9rem; max-width:400px; padding:0 20px;">
+    <p style="margin-bottom:10px;">Saving your spot...</p>
+    <div style="border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; animation: spin 1s linear infinite;"></div>
+  </div>
+
+  <!-- Confirmation -->
+  <div id="confirmationMessage" style="display: none; text-align: center; color: white; font-weight: 300; font-size: .9rem; max-width: 400px; padding: 0 20px;">
+    <h3 style="text-transform: uppercase; font-size: 1rem; font-weight: 500; margin-bottom: 10px;">You’re on the list!</h3>
+    <p style="margin-bottom: 10px;">Welcome to the LUTHER™ Priority Access.<br>We’ll email you first when Drop 01 goes live.</p>
+    <p style="font-size:.8rem; margin-top: 10px; font-family: 'Courier New', Courier, monospace; text-transform: uppercase;">39°42'08.8&quot;N | 44°17'56.7&quot;E</p>
+
+    <button type="button" id="followIgBtn" style="margin-top: 20px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
+      Follow Our Instagram
+    </button>
+
+    <button type="button" id="closeConfirmBtn" style="margin-top: 24px; padding: 12px 24px; font-size: .9rem; font-weight: 500; border: 1px solid white; border-radius: 5px; background-color: rgba(255,255,255,.05); color: white; cursor: pointer; text-transform: uppercase; backdrop-filter: blur(8px);">
+      Close
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
