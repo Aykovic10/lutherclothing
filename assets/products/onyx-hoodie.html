@@ -49,10 +49,48 @@
     }
     .nav-links { position: absolute; right: 40px; display: flex; gap: 16px; }
     header a { text-decoration: none; color: black; font-weight: 300; text-transform: uppercase; font-size: .8rem; position: relative; }
-    .logo-center { height: 20px; max-height: 20px; transition: opacity .3s ease; cursor: pointer; }
+    .logo-center {
+  display: block;
+  height: 20px;
+  max-height: 100%;
+  object-fit: contain;
+  transition: opacity .3s ease;
+  cursor: pointer;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
     .hamburger { display: none; flex-direction: column; justify-content: center; width: 30px; height: 25px; cursor: pointer; position: absolute; right: 20px; gap: 4px; z-index: 1002; }
     .hamburger span { background: black; height: 1px; width: 100%; transition: all .3s ease; }
     .hamburger span:nth-child(3) { display: none; }
+
+    header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  padding: 0 40px;
+  z-index: 1001;
+  background-color: white;
+  transition: background-color .3s ease;
+}
+
+/* Center logo vertically and horizontally in all cases */
+.logo-center {
+  display: block;
+  height: 20px;
+  max-height: 100%;
+  object-fit: contain;
+  align-self: center;        /* keeps vertical centering in flexbox */
+  position: relative;        /* default desktop position */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 
     /* Mobile menu (same as index) */
     .mobile-menu {
@@ -75,7 +113,15 @@
       .instagram-link { display: none; }
       .nav-links { display: none; }
       .hamburger { display: flex; height: 20px; }
-      .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 20px; z-index: 1002; }
+      .logo-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 20px;
+  z-index: 1002;
+}
+
     }
 
     .logo-link{ display:inline-block; line-height:0; }
