@@ -446,10 +446,11 @@ function slidePrev() {
 
   const prevIndex = (i - 1 + imgs.length) % imgs.length;
 
-  // set prev on left panel (B), position track at -fw, animate to 0
-  slideB.src = imgs[prevIndex];
-  slideA.src = imgs[i];
+  // ✅ Left panel (A) must be PREV, right panel (B) must be CURRENT
+  slideA.src = imgs[prevIndex];
+  slideB.src = imgs[i];
 
+  // Start by showing the right panel (current) at -width, then slide to 0 (prev)
   track.style.transition = 'none';
   track.style.transform  = `translateX(${-fw()}px)`;
   void track.offsetWidth;
@@ -458,14 +459,15 @@ function slidePrev() {
 
   track.addEventListener('transitionend', function done(){
     track.removeEventListener('transitionend', done);
-    setIndex(i - 1);
-    slideA.src = imgs[i];
+    setIndex(i - 1);           // commit to prev
+    slideA.src = imgs[i];      // keep A = current after commit
     track.style.transition = 'none';
     track.style.transform  = 'translateX(0px)';
     animating = false;
     updateCounter();
   }, { once:true });
 }
+
 
 // init
 slideA.src = imgs[i];
@@ -506,16 +508,17 @@ function moveDrag(x){
     track.style.transform = `translateX(${dx}px)`; // from 0 to -w
   } else if (dx > 0) {
     // Dragging RIGHT -> PREV
-    const prevIndex = (i - 1 + imgs.length) % imgs.length;
-    if (dragMode !== 'prev') {
-      // baseline at -w, left panel = prev image
-      slideA.src = imgs[i];
-      slideB.src = imgs[prevIndex];
-      track.style.transition = 'none';
-      track.style.transform  = `translateX(${-w}px)`;
-      dragMode = 'prev';
-    }
-    track.style.transform = `translateX(${-w + dx}px)`; // from -w to 0
+const prevIndex = (i - 1 + imgs.length) % imgs.length;
+if (dragMode !== 'prev') {
+  // ✅ Left panel (A) = PREV, Right panel (B) = CURRENT
+  slideA.src = imgs[prevIndex];
+  slideB.src = imgs[i];
+  track.style.transition = 'none';
+  track.style.transform  = `translateX(${-w}px)`; // start on current (right)
+  dragMode = 'prev';
+}
+track.style.transform = `translateX(${-w + dx}px)`; // move towards 0 to reveal prev
+
   } else {
     // no movement
     if (!dragMode) {
