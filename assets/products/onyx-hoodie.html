@@ -163,12 +163,31 @@
     .price{font-weight:600;margin-bottom:18px}
 
     .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-    .chip{ min-width:60px; text-align:center; padding:12px 14px; font-size:.85rem; border:1px solid var(--line); background:#fff; cursor:pointer; border-radius:6px; }
+    .chip{
+  min-width:60px;
+  text-align:center;
+  padding:12px 14px;
+  font-size:.85rem;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  border-radius:0; /* ← removed corners */
+}
+
     .chip[disabled]{opacity:.35;cursor:not-allowed}
     .chip[aria-pressed="true"]{border-color:#000}
 
     .cta{position:sticky;top:80px;display:flex;flex-direction:column;gap:10px;margin:18px 0}
-    .btn{ padding:14px 16px;text-transform:uppercase;border:1px solid #000;background:#000;color:#fff;cursor:pointer;border-radius:8px; }
+    .btn{
+  padding:14px 16px;
+  text-transform:uppercase;
+  border:1px solid #000;
+  background:#000;
+  color:#fff;
+  cursor:pointer;
+  border-radius:0; /* ← removed corners */
+}
+
     .flags{display:flex;flex-direction:column;gap:8px;background:#f6f6f6;border:1px solid var(--line);border-radius:8px;padding:12px}
     .flag{display:flex;align-items:center;gap:10px;font-size:.9rem;color:#333}
     .dot{width:10px;height:10px;border-radius:50%;background:var(--ok)}
