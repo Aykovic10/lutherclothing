@@ -170,9 +170,13 @@
   font-size:.85rem;
   border:1px solid var(--line);
   background:#fff;
+  color:#111; /* ← make text black everywhere */
   cursor:pointer;
-  border-radius:0; /* ← removed corners */
+  border-radius:0;
+  -webkit-tap-highlight-color: transparent; /* ← remove blue highlight on tap */
+  appearance: none; /* ← remove native button styling */
 }
+
 
     .chip[disabled]{opacity:.35;cursor:not-allowed}
     .chip[aria-pressed="true"]{border-color:#000}
