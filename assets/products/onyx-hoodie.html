@@ -254,12 +254,14 @@
 }
     /* Enable animated slide only when JS is available */
 .js .accordion .acc-body{
-  overflow: hidden;
-  height: 0;                 /* collapsed */
-  opacity: 0;
-  transition: height 280ms ease, opacity 220ms ease;
-  padding-top: 0;            /* avoid jump during collapse */
+  overflow:hidden;
+  height:0;
+  opacity:0;
+  transition:height 280ms ease, opacity 220ms ease;
+  padding-top:0;
+  will-change: height;   /* <— add */
 }
+
 .js .accordion details[open] .acc-body{
   opacity: 1;                /* height is driven by JS; opacity fades */
 }
@@ -690,8 +692,8 @@
     });
   });
   </script>
-  <script>
-// Smooth slide for <details> accordions (open + close)
+ <script>
+// Smooth slide for <details> accordions (open + close with animation)
 document.addEventListener('DOMContentLoaded', () => {
   const items = document.querySelectorAll('.accordion details');
 
@@ -700,51 +702,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = details.querySelector('.acc-body');
     if (!summary || !body) return;
 
-    // If initially open, set correct height so we can animate later
+    // If initially open, lock height so the first close can animate
     if (details.open) body.style.height = body.scrollHeight + 'px';
 
-    // Intercept close to animate first, then actually close
     summary.addEventListener('click', (e) => {
-      // If it's open now, user is trying to close it
+      // ---- Closing (it's open now; user is trying to close) ----
       if (details.open) {
-        e.preventDefault();               // stop native instant close
-        const start = body.scrollHeight;  // current height
-        body.style.height = start + 'px'; // lock current height
+        e.preventDefault();                          // stop native instant close
+        const start = body.scrollHeight;             // current px height
+        body.style.height = start + 'px';            // lock height
+        body.style.opacity = '1';
         requestAnimationFrame(() => {
-          body.style.height = '0px';      // animate to 0
+          body.style.height = '0px';                 // animate up
+          body.style.opacity = '0';
         });
 
-        body.addEventListener('transitionend', function onEnd(ev){
+        const onEnd = (ev) => {
           if (ev.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-          details.open = false;           // now actually close
-          body.style.height = '';         // cleanup inline style
-        });
-      } else {
-        // Opening: let native open happen, then animate to content height
-        // Let the toggle event fire after default behavior
-        // (no preventDefault here)
+          details.open = false;                      // now actually close
+          body.style.height = '0px';                 // keep ready for next open
+        };
+        body.addEventListener('transitionend', onEnd);
+      }
+      // ---- Opening (it is closed now; let it open then animate) ----
+      else {
+        // allow native open, but wait until it flips to open
+        const onToggle = () => {
+          details.removeEventListener('toggle', onToggle);
+          body.style.height = '0px';                 // start collapsed
+          body.style.opacity = '0';
+          // next frame, grow to content height
+          requestAnimationFrame(() => {
+            body.style.height = body.scrollHeight + 'px';
+            body.style.opacity = '1';
+          });
+          // after animation, set to auto so content changes don't break
+          const onEnd = (ev) => {
+            if (ev.propertyName !== 'height') return;
+            body.removeEventListener('transitionend', onEnd);
+            body.style.height = 'auto';
+          };
+          body.addEventListener('transitionend', onEnd);
+        };
+        details.addEventListener('toggle', onToggle, { once:true });
       }
     });
 
-    // Animate opening after native toggle sets open=true
-    details.addEventListener('toggle', () => {
-      if (!details.open) return;               // closing handled above
-      body.style.height = '0px';               // start from 0
-      // Next frame, set to full height to trigger animation
-      requestAnimationFrame(() => {
-        body.style.height = body.scrollHeight + 'px';
-      });
-      // After animation, set to auto for natural reflow
-      body.addEventListener('transitionend', function onEnd(e){
-        if (e.propertyName === 'height') {
-          body.style.height = 'auto';
-          body.removeEventListener('transitionend', onEnd);
-        }
-      });
-    });
-
-    // Keep height in sync if content changes while open and height is not auto yet
+    // Keep height in sync if content changes while open and before we've switched to auto
     const ro = new ResizeObserver(() => {
       if (details.open && body.style.height !== 'auto') {
         body.style.height = body.scrollHeight + 'px';
@@ -754,7 +759,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
 
 </body>
 </html>
