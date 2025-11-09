@@ -71,12 +71,26 @@
     body.menu-open { overflow: hidden; }
 
     @media (max-width: 768px) {
-      header { padding: 0 20px; z-index: 1001; height: 50px; }
-      .instagram-link { display: none; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; height: 20px; }
-      .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 20px; z-index: 1002; }
-    }
+  header { padding: 0 20px; z-index: 1001; height: 50px; }
+  .instagram-link { display: none; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; height: 20px; }
+
+  /* ✅ Center the logo perfectly inside the 50px header */
+  .logo-link {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 0;
+    z-index: 1002;
+  }
+  .logo-center {
+    height: 20px;
+    display: block;  /* keep the image block-level; no positioning here */
+  }
+}
+
 
     .logo-link{ display:inline-block; line-height:0; }
     .logo-center{ display:block; } /* removes baseline gap */
