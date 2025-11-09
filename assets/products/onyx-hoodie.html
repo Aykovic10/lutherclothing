@@ -92,6 +92,17 @@
         /* ✅ Mobile-only side padding for the details column */
   .details { padding: 0 20px; }
 }
+    /* Breathing room under the fixed header for the right column only */
+.details{
+  margin-top: 16px;      /* mobile & tablet */
+}
+
+@media (min-width: 981px){
+  .details{
+    margin-top: 24px;    /* a touch more on desktop */
+  }
+}
+
 
 
     .logo-link{ display:inline-block; line-height:0; }
