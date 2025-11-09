@@ -284,48 +284,87 @@
       </section>
 
       <!-- ============== DETAILS ============== -->
-      <section class="details" aria-label="Product details">
-        <h1 class="title">Onyx Black Hoodie</h1>
-        <div class="sub">Heavyweight fleece — Signature fit</div>
-        <div class="price">$88</div>
+     <section class="details" aria-label="Product details">
+  <h1 class="title">Onyx Black Hoodie</h1>
+  <div class="sub">Heavyweight fleece — Signature fit</div>
+  <div class="price">$88</div>
 
-        <div class="sub" style="margin-bottom:8px">Select Size</div>
-        <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
-          <button class="chip" type="button" data-val="S"  aria-pressed="false">S</button>
-          <button class="chip" type="button" data-val="M"  aria-pressed="false">M</button>
-          <button class="chip" type="button" data-val="L"  aria-pressed="false">L</button>
-          <button class="chip" type="button" data-val="XL" aria-pressed="false">XL</button>
-        </div>
+  <!-- Row: Select Colour -->
+  <div class="option-row">
+    <div class="label">Select Colour</div>
+    <div class="value"><span id="colorValue">Onyx</span></div>
+  </div>
 
-        <div class="cta">
-          <button class="btn" id="ctaBtn" disabled>Select a size</button>
-          <div class="flags">
-            <div class="flag"><span class="muted">🏁</span> Earn 88 Prestige Points</div>
-            <div class="flag"><span class="muted">🚚</span> Free shipping over $300</div>
-            <div class="flag"><span class="dot"></span> In stock</div>
-          </div>
-        </div>
+  <!-- Colour thumbs -->
+  <div class="color-swatches" role="group" aria-label="Choose a colour">
+    <button class="swatch" type="button" aria-current="true" data-color="Onyx">
+      <img src="/assets/products/essentials/onyx-hoodie/front.png" alt="Onyx front">
+    </button>
+    <button class="swatch" type="button" data-color="Onyx">
+      <img src="/assets/products/essentials/onyx-hoodie/back.png" alt="Onyx back">
+    </button>
+  </div>
 
-        <div class="accordion">
-          <details>
-            <summary>Product Details <span class="muted">+</span></summary>
-            <div class="acc-body">
-              <p>• 80% Cotton / 20% Polyester, 450 GSM heavyweight fleece</p>
-              <p>• Kangaroo pocket, ribbed cuffs & hem</p>
-              <p>• Screenprinted LUTHER mark</p>
-              <p>• Model is 188cm / 75kg wearing size M</p>
-            </div>
-          </details>
-          <details>
-            <summary>Shipping & Returns <span class="muted">+</span></summary>
-            <div class="acc-body">
-              <p>• Ships worldwide. Free shipping on orders $300+.</p>
-              <p>• 14-day returns on unworn items with tags.</p>
-              <p>• Pre-order items ship on drop release.</p>
-            </div>
-          </details>
-        </div>
-      </section>
+  <!-- Model note -->
+  <p class="model-note">Model is 188cm and 75kg wearing size M</p>
+
+  <!-- Size grid -->
+  <div class="option-row">
+    <div class="label">Select Size</div>
+    <div class="value"><a class="fit-guide" href="#" aria-label="Size & Fit Guide">Size &amp; Fit Guide</a></div>
+  </div>
+
+  <div class="size-grid" id="sizeGrid" role="group" aria-label="Choose a size">
+    <button class="size" type="button" data-val="XXS">XXS</button>
+    <button class="size" type="button" data-val="XS"  disabled>XS</button>
+    <button class="size" type="button" data-val="S">S</button>
+    <button class="size" type="button" data-val="M"  disabled>M</button>
+    <button class="size" type="button" data-val="L"  disabled>L</button>
+    <button class="size" type="button" data-val="XL" disabled>XL</button>
+    <button class="size" type="button" data-val="XXL">XXL</button>
+  </div>
+
+  <a class="stock-link" href="#">Size Not In Stock?</a>
+
+  <!-- CTA + Flags -->
+  <div class="cta">
+    <button class="btn" id="ctaBtn" disabled>SELECT A SIZE</button>
+    <div class="flags flags--bar">
+      <div class="flag"><span class="icon badge"></span> EARN 88 PRESTIGE POINTS</div>
+      <div class="flag"><span class="icon truck"></span> FREE SHIPPING OVER $300</div>
+      <div class="flag"><span class="icon light"></span> LIMITED STOCK</div>
+    </div>
+  </div>
+
+  <!-- Accordions -->
+  <div class="accordion">
+    <details>
+      <summary>Product Details <span class="muted">+</span></summary>
+      <div class="acc-body">
+        <p>• 80% Cotton / 20% Polyester, 450 GSM heavyweight fleece</p>
+        <p>• Kangaroo pocket, ribbed cuffs & hem</p>
+        <p>• Screenprinted LUTHER mark</p>
+        <p>• Model is 188cm / 75kg wearing size M</p>
+      </div>
+    </details>
+    <details>
+      <summary>Product FAQs <span class="muted">+</span></summary>
+      <div class="acc-body">
+        <p>• How should I wash it? Cold wash inside-out, hang dry.</p>
+        <p>• Does it shrink? Minimal shrink with proper care.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Shipping & Returns <span class="muted">+</span></summary>
+      <div class="acc-body">
+        <p>• Ships worldwide. Free shipping on orders $300+.</p>
+        <p>• 14-day returns on unworn items with tags.</p>
+        <p>• Pre-order items ship on drop release.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
     </div>
   </main>
 
