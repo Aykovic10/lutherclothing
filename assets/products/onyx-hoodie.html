@@ -693,38 +693,37 @@
   });
   </script>
  <script>
-// Smooth, reliable <details> open/close using only the 'toggle' event
+// Smooth <details> with re-entry suppression so it works every time
 document.addEventListener('DOMContentLoaded', () => {
-  const items = document.querySelectorAll('.accordion details');
-
-  items.forEach((details) => {
+  document.querySelectorAll('.accordion details').forEach((details) => {
     const body = details.querySelector('.acc-body');
     if (!body) return;
 
     let animating = false;
+    let suppressToggle = false; // prevents our own .open changes from retriggering logic
 
-    // If initially open, lock height so first close animates
+    // If initially open, lock height so the first close can animate
     if (details.open) body.style.height = body.scrollHeight + 'px';
 
     details.addEventListener('toggle', () => {
-      if (animating) return;
+      if (suppressToggle) return;
 
       // ----- OPENING -----
       if (details.open) {
+        if (animating) return;
         animating = true;
-        // Start collapsed
+
         body.style.height = '0px';
         body.style.opacity = '0';
-        // Next frame, grow to content height
         requestAnimationFrame(() => {
           body.style.height = body.scrollHeight + 'px';
           body.style.opacity = '1';
         });
+
         const onEnd = (e) => {
           if (e.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-          // Unlock so dynamic content flows
-          body.style.height = 'auto';
+          body.style.height = 'auto';     // unlock natural flow
           animating = false;
         };
         body.addEventListener('transitionend', onEnd);
@@ -732,16 +731,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ----- CLOSING -----
       else {
+        if (animating) return;
         animating = true;
 
-        // Keep it open for the duration of the animation
+        // keep it visually open while we animate up
+        suppressToggle = true;
         details.open = true;
+        queueMicrotask(() => { suppressToggle = false; });
 
-        // From current height (auto or px) -> 0
         const start = body.scrollHeight;
         body.style.height = start + 'px';
         body.style.opacity = '1';
-        // Force reflow so the browser acknowledges 'start' before we go to 0
+        // force reflow so we can go from start -> 0
         void body.offsetHeight;
         body.style.height = '0px';
         body.style.opacity = '0';
@@ -749,9 +750,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const onEnd = (e) => {
           if (e.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-          // Actually close now, and keep collapsed for next open
+
+          // now actually close without re-entering handler
+          suppressToggle = true;
           details.open = false;
-          body.style.height = '0px';
+          queueMicrotask(() => { suppressToggle = false; });
+
+          body.style.height = '0px'; // keep collapsed for the next open
           body.style.opacity = '';
           animating = false;
         };
