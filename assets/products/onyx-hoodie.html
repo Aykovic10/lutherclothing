@@ -692,71 +692,59 @@
     });
   });
   </script>
- <script>
-// Smooth <details> with re-entry suppression so it works every time
+<script>
+// Rock-solid <details> accordion: we handle open/close on <summary> clicks
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.accordion details').forEach((details) => {
+    const summary = details.querySelector('summary');
     const body = details.querySelector('.acc-body');
-    if (!body) return;
+    if (!summary || !body) return;
 
     let animating = false;
-    let suppressToggle = false; // prevents our own .open changes from retriggering logic
 
-    // If initially open, lock height so the first close can animate
+    // If initially open, lock height so first close animates
     if (details.open) body.style.height = body.scrollHeight + 'px';
 
-    details.addEventListener('toggle', () => {
-      if (suppressToggle) return;
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();                 // stop native toggle
+      if (animating) return;
 
-      // ----- OPENING -----
-      if (details.open) {
-        if (animating) return;
-        animating = true;
+      const isOpening = !details.open;
+      animating = true;
 
-        body.style.height = '0px';
+      if (isOpening) {
+        // OPEN
+        details.open = true;              // a11y + state
+        body.style.height = '0px';        // start collapsed
         body.style.opacity = '0';
+        // next frame -> expand to content
         requestAnimationFrame(() => {
           body.style.height = body.scrollHeight + 'px';
           body.style.opacity = '1';
         });
-
-        const onEnd = (e) => {
-          if (e.propertyName !== 'height') return;
+        const onEnd = (ev) => {
+          if (ev.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-          body.style.height = 'auto';     // unlock natural flow
+          body.style.height = 'auto';     // unlock for natural flow
           animating = false;
         };
         body.addEventListener('transitionend', onEnd);
-      }
-
-      // ----- CLOSING -----
-      else {
-        if (animating) return;
-        animating = true;
-
-        // keep it visually open while we animate up
-        suppressToggle = true;
-        details.open = true;
-        queueMicrotask(() => { suppressToggle = false; });
-
+      } else {
+        // CLOSE
+        // lock current height (auto -> px) then animate to 0
         const start = body.scrollHeight;
         body.style.height = start + 'px';
         body.style.opacity = '1';
-        // force reflow so we can go from start -> 0
+        // force reflow so browser registers the start height
         void body.offsetHeight;
         body.style.height = '0px';
         body.style.opacity = '0';
 
-        const onEnd = (e) => {
-          if (e.propertyName !== 'height') return;
+        const onEnd = (ev) => {
+          if (ev.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-
-          // now actually close without re-entering handler
-          suppressToggle = true;
-          details.open = false;
-          queueMicrotask(() => { suppressToggle = false; });
-
-          body.style.height = '0px'; // keep collapsed for the next open
+          details.open = false;           // actually close
+          body.style.height = '0px';      // keep collapsed for next open
           body.style.opacity = '';
           animating = false;
         };
