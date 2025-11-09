@@ -693,84 +693,71 @@
   });
   </script>
  <script>
-// Smooth slide for <details> accordions (open + close, no glitches)
+// Smooth, reliable <details> open/close using only the 'toggle' event
 document.addEventListener('DOMContentLoaded', () => {
   const items = document.querySelectorAll('.accordion details');
 
   items.forEach((details) => {
-    const summary = details.querySelector('summary');
     const body = details.querySelector('.acc-body');
-    if (!summary || !body) return;
+    if (!body) return;
 
-    let isAnimating = false;
+    let animating = false;
 
-    // If initially open, lock height so the first close can animate
+    // If initially open, lock height so first close animates
     if (details.open) body.style.height = body.scrollHeight + 'px';
 
-    summary.addEventListener('click', (e) => {
-      if (isAnimating) { e.preventDefault(); return; }
+    details.addEventListener('toggle', () => {
+      if (animating) return;
 
-      // ---- Closing ----
+      // ----- OPENING -----
       if (details.open) {
-        e.preventDefault(); // stop native instant close
-        isAnimating = true;
-
-        // Lock current height (from 'auto' -> px) and force reflow
-        body.style.height = body.scrollHeight + 'px';
-        body.style.opacity = '1';
-        void body.offsetHeight; // <-- critical reflow before shrinking
-
-        // Animate to 0
+        animating = true;
+        // Start collapsed
         body.style.height = '0px';
         body.style.opacity = '0';
-
-        const onEnd = (ev) => {
-          if (ev.propertyName !== 'height') return;
+        // Next frame, grow to content height
+        requestAnimationFrame(() => {
+          body.style.height = body.scrollHeight + 'px';
+          body.style.opacity = '1';
+        });
+        const onEnd = (e) => {
+          if (e.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-          details.open = false;     // actually close
-          // Keep collapsed values ready for the next open
-          body.style.height = '0px';
-          body.style.opacity = '';
-          isAnimating = false;
+          // Unlock so dynamic content flows
+          body.style.height = 'auto';
+          animating = false;
         };
         body.addEventListener('transitionend', onEnd);
       }
 
-      // ---- Opening ----
+      // ----- CLOSING -----
       else {
-        // let native toggle happen, then animate
-        const onToggle = () => {
-          details.removeEventListener('toggle', onToggle);
-          isAnimating = true;
+        animating = true;
 
-          // Start from collapsed
+        // Keep it open for the duration of the animation
+        details.open = true;
+
+        // From current height (auto or px) -> 0
+        const start = body.scrollHeight;
+        body.style.height = start + 'px';
+        body.style.opacity = '1';
+        // Force reflow so the browser acknowledges 'start' before we go to 0
+        void body.offsetHeight;
+        body.style.height = '0px';
+        body.style.opacity = '0';
+
+        const onEnd = (e) => {
+          if (e.propertyName !== 'height') return;
+          body.removeEventListener('transitionend', onEnd);
+          // Actually close now, and keep collapsed for next open
+          details.open = false;
           body.style.height = '0px';
-          body.style.opacity = '0';
-          void body.offsetHeight; // reflow
-
-          // Grow to content height
-          body.style.height = body.scrollHeight + 'px';
-          body.style.opacity = '1';
-
-          const onEnd = (ev) => {
-            if (ev.propertyName !== 'height') return;
-            body.removeEventListener('transitionend', onEnd);
-            body.style.height = 'auto'; // unlock for natural layout
-            isAnimating = false;
-          };
-          body.addEventListener('transitionend', onEnd);
+          body.style.opacity = '';
+          animating = false;
         };
-        details.addEventListener('toggle', onToggle, { once:true });
+        body.addEventListener('transitionend', onEnd);
       }
     });
-
-    // Keep height in sync if content changes while opening (before 'auto')
-    const ro = new ResizeObserver(() => {
-      if (details.open && body.style.height !== 'auto') {
-        body.style.height = body.scrollHeight + 'px';
-      }
-    });
-    ro.observe(body);
   });
 });
 </script>
