@@ -252,6 +252,18 @@
     margin-left: calc((100vw - 1280px) / -2);
   }
 }
+    /* Enable animated slide only when JS is available */
+.js .accordion .acc-body{
+  overflow: hidden;
+  height: 0;                 /* collapsed */
+  opacity: 0;
+  transition: height 280ms ease, opacity 220ms ease;
+  padding-top: 0;            /* avoid jump during collapse */
+}
+.js .accordion details[open] .acc-body{
+  opacity: 1;                /* height is driven by JS; opacity fades */
+}
+
 
     
   </style>
@@ -277,6 +289,9 @@
     }
   }
   </script>
+
+  <script>document.documentElement.classList.add('js');</script>
+
 </head>
 <body>
   <!-- ====== HEADER ====== -->
@@ -675,5 +690,50 @@
     });
   });
   </script>
+  <script>
+  // Smooth slide for <details> accordions
+  document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('.accordion details');
+
+    items.forEach((details) => {
+      const body = details.querySelector('.acc-body');
+      if (!body) return;
+
+      // If initially open, set correct height
+      if (details.open) {
+        body.style.height = body.scrollHeight + 'px';
+      }
+
+      details.addEventListener('toggle', () => {
+        // Opening
+        if (details.open) {
+          body.style.height = body.scrollHeight + 'px';
+
+          // After the animation, set to auto for natural reflow
+          body.addEventListener('transitionend', function onEnd(e){
+            if (e.propertyName === 'height') {
+              body.style.height = 'auto';
+              body.removeEventListener('transitionend', onEnd);
+            }
+          });
+        } else {
+          // Closing: set current height, then animate to 0
+          const current = body.scrollHeight;
+          body.style.height = current + 'px';
+          void body.offsetHeight; // force reflow
+          body.style.height = '0px';
+        }
+      });
+
+      // Keep height in sync if content inside changes while open
+      const ro = new ResizeObserver(() => {
+        if (details.open && body.style.height === 'auto') return;
+        if (details.open) body.style.height = body.scrollHeight + 'px';
+      });
+      ro.observe(body);
+    });
+  });
+</script>
+
 </body>
 </html>
