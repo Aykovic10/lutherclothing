@@ -693,7 +693,7 @@
   });
   </script>
  <script>
-// Smooth slide for <details> accordions (open + close with animation)
+// Smooth slide for <details> accordions (open + close, no glitches)
 document.addEventListener('DOMContentLoaded', () => {
   const items = document.querySelectorAll('.accordion details');
 
@@ -702,46 +702,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = details.querySelector('.acc-body');
     if (!summary || !body) return;
 
+    let isAnimating = false;
+
     // If initially open, lock height so the first close can animate
     if (details.open) body.style.height = body.scrollHeight + 'px';
 
     summary.addEventListener('click', (e) => {
-      // ---- Closing (it's open now; user is trying to close) ----
+      if (isAnimating) { e.preventDefault(); return; }
+
+      // ---- Closing ----
       if (details.open) {
-        e.preventDefault();                          // stop native instant close
-        const start = body.scrollHeight;             // current px height
-        body.style.height = start + 'px';            // lock height
+        e.preventDefault(); // stop native instant close
+        isAnimating = true;
+
+        // Lock current height (from 'auto' -> px) and force reflow
+        body.style.height = body.scrollHeight + 'px';
         body.style.opacity = '1';
-        requestAnimationFrame(() => {
-          body.style.height = '0px';                 // animate up
-          body.style.opacity = '0';
-        });
+        void body.offsetHeight; // <-- critical reflow before shrinking
+
+        // Animate to 0
+        body.style.height = '0px';
+        body.style.opacity = '0';
 
         const onEnd = (ev) => {
           if (ev.propertyName !== 'height') return;
           body.removeEventListener('transitionend', onEnd);
-          details.open = false;                      // now actually close
-          body.style.height = '0px';                 // keep ready for next open
+          details.open = false;     // actually close
+          // Keep collapsed values ready for the next open
+          body.style.height = '0px';
+          body.style.opacity = '';
+          isAnimating = false;
         };
         body.addEventListener('transitionend', onEnd);
       }
-      // ---- Opening (it is closed now; let it open then animate) ----
+
+      // ---- Opening ----
       else {
-        // allow native open, but wait until it flips to open
+        // let native toggle happen, then animate
         const onToggle = () => {
           details.removeEventListener('toggle', onToggle);
-          body.style.height = '0px';                 // start collapsed
+          isAnimating = true;
+
+          // Start from collapsed
+          body.style.height = '0px';
           body.style.opacity = '0';
-          // next frame, grow to content height
-          requestAnimationFrame(() => {
-            body.style.height = body.scrollHeight + 'px';
-            body.style.opacity = '1';
-          });
-          // after animation, set to auto so content changes don't break
+          void body.offsetHeight; // reflow
+
+          // Grow to content height
+          body.style.height = body.scrollHeight + 'px';
+          body.style.opacity = '1';
+
           const onEnd = (ev) => {
             if (ev.propertyName !== 'height') return;
             body.removeEventListener('transitionend', onEnd);
-            body.style.height = 'auto';
+            body.style.height = 'auto'; // unlock for natural layout
+            isAnimating = false;
           };
           body.addEventListener('transitionend', onEnd);
         };
@@ -749,7 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Keep height in sync if content changes while open and before we've switched to auto
+    // Keep height in sync if content changes while opening (before 'auto')
     const ro = new ResizeObserver(() => {
       if (details.open && body.style.height !== 'auto') {
         body.style.height = body.scrollHeight + 'px';
@@ -759,6 +774,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
 </body>
 </html>
