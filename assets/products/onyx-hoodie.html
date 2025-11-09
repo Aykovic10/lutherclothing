@@ -143,7 +143,14 @@
     .slide-in-left  { animation: slideInFromLeft 280ms ease both; }
     .slide-in-right { animation: slideInFromRight 280ms ease both; }
 
-    .count{position:absolute;left:16px;bottom:12px;font-size:.9rem;color:var(--muted)}
+    .count{
+  position:absolute;
+  left:16px;
+  bottom:12px;
+  font-size:.9rem;
+  color:var(--muted);
+  z-index:3; /* <-- bring it above the slides */
+}
 
     .thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
     .thumb{aspect-ratio:3/4;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:#f1f1f1}
