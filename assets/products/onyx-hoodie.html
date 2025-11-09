@@ -89,6 +89,8 @@
     height: 20px;
     display: block;  /* keep the image block-level; no positioning here */
   }
+        /* ✅ Mobile-only side padding for the details column */
+  .details { padding: 0 20px; }
 }
 
 
@@ -265,7 +267,7 @@
       </section>
 
       <!-- ============== DETAILS ============== -->
-      <section aria-label="Product details">
+      <section class="details" aria-label="Product details">
         <h1 class="title">Onyx Black Hoodie</h1>
         <div class="sub">Heavyweight fleece — Signature fit</div>
         <div class="price">$88</div>
