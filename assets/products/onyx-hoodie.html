@@ -203,6 +203,16 @@
       transform: scale(1);
       pointer-events: auto;
     }
+
+    /* Desktop: make the gallery flush to the left edge of the screen */
+@media (min-width: 1280px) {
+  .gallery {
+    /* Pull the gallery left by the same side gutter your centered container adds */
+    margin-left: calc((100vw - 1280px) / -2);
+  }
+}
+
+    
   </style>
 
   <!-- SEO: Product JSON-LD -->
