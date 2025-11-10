@@ -295,41 +295,12 @@
   align-self:flex-end; border:1px solid var(--line); background:#fff;
   padding:6px 10px; font-size:.8rem; text-transform:uppercase; cursor:pointer;
 }
-
-    <script>
-  // Size chart modal
-  const sizeChartModal = document.getElementById('sizeChartModal');
-  const openSizeChart  = document.getElementById('openSizeChart');
-  const closeSizeChart = document.getElementById('closeSizeChart');
-
-  function openSC(){
-    sizeChartModal.style.display = 'flex';
-    requestAnimationFrame(() => sizeChartModal.classList.add('show'));
-    document.body.classList.add('menu-open'); // reuse body lock style
-  }
-  function closeSC(){
-    sizeChartModal.classList.remove('show');
-    document.body.classList.remove('menu-open');
-    sizeChartModal.addEventListener('transitionend', () => {
-      sizeChartModal.style.display = 'none';
-    }, { once:true });
-  }
-
-  openSizeChart.addEventListener('click', openSC);
-  closeSizeChart.addEventListener('click', closeSC);
-  sizeChartModal.addEventListener('click', (e) => { if (e.target === sizeChartModal) closeSC(); });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && sizeChartModal.classList.contains('show')) closeSC();
-  });
-</script>
-
-
-
     
   </style>
 
   <!-- SEO: Product JSON-LD -->
-  <script type="application/ld+json">
+  <script> 
+    type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"Product",
@@ -819,6 +790,35 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
+  <script>
+  // Size chart modal
+  const sizeChartModal = document.getElementById('sizeChartModal');
+  const openSizeChart  = document.getElementById('openSizeChart');
+  const closeSizeChart = document.getElementById('closeSizeChart');
+
+  function openSC(){
+    sizeChartModal.style.display = 'flex';
+    requestAnimationFrame(() => sizeChartModal.classList.add('show'));
+    document.body.classList.add('menu-open'); // reuse body lock style
+  }
+  function closeSC(){
+    sizeChartModal.classList.remove('show');
+    document.body.classList.remove('menu-open');
+    sizeChartModal.addEventListener('transitionend', () => {
+      sizeChartModal.style.display = 'none';
+    }, { once:true });
+  }
+
+  openSizeChart.addEventListener('click', openSC);
+  closeSizeChart.addEventListener('click', closeSC);
+  sizeChartModal.addEventListener('click', (e) => { if (e.target === sizeChartModal) closeSC(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sizeChartModal.classList.contains('show')) closeSC();
+  });
+</script>
+
+  
 
   <div id="sizeChartModal" aria-hidden="true" role="dialog" aria-label="Size chart" style="display:none">
   <div class="sizechart-card">
