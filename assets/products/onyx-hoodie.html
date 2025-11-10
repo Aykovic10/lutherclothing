@@ -299,27 +299,26 @@
   </style>
 
   <!-- SEO: Product JSON-LD -->
-  <script> 
-    type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Product",
-    "name":"Onyx Black Hoodie",
-    "image":[
-      "/assets/products/essentials/onyx-hoodie/front.png",
-      "/assets/products/essentials/onyx-hoodie/back.png"
-    ],
-    "description":"Heavyweight fleece — Signature fit",
-    "brand":{"@type":"Brand","name":"LUTHER"},
-    "offers":{
-      "@type":"Offer",
-      "priceCurrency":"USD",
-      "price":"",
-      "availability":"https://schema.org/PreOrder",
-      "url":"https://www.lutherclothing.com/assets/products/onyx-hoodie.html"
-    }
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Product",
+  "name":"Onyx Black Hoodie",
+  "image":[
+    "/assets/products/essentials/onyx-hoodie/front.png",
+    "/assets/products/essentials/onyx-hoodie/back.png"
+  ],
+  "description":"Heavyweight fleece — Signature fit",
+  "brand":{"@type":"Brand","name":"LUTHER"},
+  "offers":{
+    "@type":"Offer",
+    "priceCurrency":"USD",
+    "price":"",
+    "availability":"https://schema.org/PreOrder",
+    "url":"https://www.lutherclothing.com/assets/products/onyx-hoodie.html"
   }
-  </script>
+}
+</script>
 
   <script>document.documentElement.classList.add('js');</script>
 
@@ -455,6 +454,14 @@
       </button>
     </div>
   </div>
+
+  <div id="sizeChartModal" aria-hidden="true" role="dialog" aria-label="Size chart" style="display:none">
+  <div class="sizechart-card">
+    <button class="sizechart-close" id="closeSizeChart">Close</button>
+    <img src="/assets/sizeCharts/boxyHoodieSizes.png" alt="Size chart — Boxy Hoodie">
+  </div>
+</div>
+
 
   <!-- ====== SCRIPTS ====== -->
   <script>
@@ -817,15 +824,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && sizeChartModal.classList.contains('show')) closeSC();
   });
 </script>
-
-  
-
-  <div id="sizeChartModal" aria-hidden="true" role="dialog" aria-label="Size chart" style="display:none">
-  <div class="sizechart-card">
-    <button class="sizechart-close" id="closeSizeChart">Close</button>
-    <img src="/assets/sizeCharts/boxyHoodieSizes.png" alt="Size chart — Boxy Hoodie">
-  </div>
-</div>
-
 </body>
 </html>
