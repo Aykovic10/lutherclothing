@@ -152,6 +152,21 @@
     }
 
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Section title */
+#productSection .section-title{
+  font-family: 'LutherHeavy', var(--text);
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: .12em;
+  color: #111;
+  font-size: clamp(1.3rem, 2.5vw + .5rem, 2.2rem); /* bigger + responsive */
+  margin: 32px 0;     /* gap above & below */
+  padding: 0 16px;    /* a little side breathing room */
+}
+
+    
   </style>
 
 </head>
@@ -183,7 +198,7 @@
   </div>
 
   <section id="productSection" style="background-color: #FAF9F6;">
-    <h2 style="font-size:.75rem; text-transform: uppercase; font-weight: 300; margin-bottom: 20px; letter-spacing: 1px;">Luther Essentials</h2>
+    <h2 class="section-title">LUTHER ESSENTIALS</h2>
     <div class="product-grid">
 
       
