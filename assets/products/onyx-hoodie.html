@@ -285,16 +285,49 @@
 }
 #sizeChartModal.show{ display:flex; opacity:1; visibility:visible; }
 
+/* ONLY this part is new ↓↓↓ */
 .sizechart-card{
-  background:#fff; max-width:min(92vw, 720px); max-height:90vh;
-  padding:12px; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,.2);
-  display:flex; flex-direction:column; gap:8px;
+  position: relative;
+  max-width: min(95vw, 900px);
+  max-height: 95vh;
+  padding: 0;
+  background: transparent;   /* no white holder */
+  border-radius: 0;
+  box-shadow: none;          /* no border/shadow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.sizechart-card img{ width:100%; height:auto; object-fit:contain; }
+
+.sizechart-card img{
+  display: block;
+  max-width: 100%;
+  max-height: 95vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* round X button on top-right of the image */
 .sizechart-close{
-  align-self:flex-end; border:1px solid var(--line); background:#fff;
-  padding:6px 10px; font-size:.8rem; text-transform:uppercase; cursor:pointer;
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #000;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
 }
+/* ↑↑↑ new code ends here */
     
   </style>
 
@@ -457,7 +490,8 @@
 
   <div id="sizeChartModal" aria-hidden="true" role="dialog" aria-label="Size chart" style="display:none">
   <div class="sizechart-card">
-    <button class="sizechart-close" id="closeSizeChart">Close</button>
+    <!-- X button in the top-right of the image -->
+    <button class="sizechart-close" id="closeSizeChart" aria-label="Close size chart">×</button>
     <img src="/assets/sizeCharts/boxyHoodieSizes.png" alt="Size chart — Boxy Hoodie">
   </div>
 </div>
