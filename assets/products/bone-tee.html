@@ -266,31 +266,92 @@
   opacity: 1;                /* height is driven by JS; opacity fades */
 }
 
+    /* Size chart link row */
+.size-row{
+  display:flex; justify-content:space-between; align-items:baseline;
+}
+.sizechart-link{
+  font-size:.75rem; text-transform:uppercase; color:var(--muted);
+  background:none; border:0; padding:0; cursor:pointer; text-decoration:underline;
+}
 
+/* Modal */
+#sizeChartModal{
+  position:fixed; inset:0; z-index:2000;
+  display:none; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.6);
+  opacity:0; visibility:hidden;
+  transition:opacity .3s ease, visibility .3s ease;
+}
+#sizeChartModal.show{ display:flex; opacity:1; visibility:visible; }
+
+/* ONLY this part is new ↓↓↓ */
+.sizechart-card{
+  position: relative;
+  max-width: min(95vw, 900px);
+  max-height: 95vh;
+  padding: 0;
+  background: transparent;   /* no white holder */
+  border-radius: 0;
+  box-shadow: none;          /* no border/shadow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sizechart-card img{
+  display: block;
+  max-width: 100%;
+  max-height: 95vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* round X button on top-right of the image */
+.sizechart-close{
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #000;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+/* ↑↑↑ new code ends here */
     
   </style>
 
   <!-- SEO: Product JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Product",
-    "name":"Onyx Black Hoodie",
-    "image":[
-      "/assets/products/essentials/onyx-hoodie/front.png",
-      "/assets/products/essentials/onyx-hoodie/back.png"
-    ],
-    "description":"Heavyweight fleece — Signature fit",
-    "brand":{"@type":"Brand","name":"LUTHER"},
-    "offers":{
-      "@type":"Offer",
-      "priceCurrency":"USD",
-      "price":"",
-      "availability":"https://schema.org/PreOrder",
-      "url":"https://www.lutherclothing.com/assets/products/onyx-hoodie.html"
-    }
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Product",
+  "name":"Bone Tee",
+  "image":[
+    "/assets/products/essentials/bone-tee/front.png",
+    "/assets/products/essentials/bone-tee/back.png"
+  ],
+  "description":"Heavyweight fleece — Signature fit",
+  "brand":{"@type":"Brand","name":"LUTHER"},
+  "offers":{
+    "@type":"Offer",
+    "priceCurrency":"USD",
+    "price":"",
+    "availability":"https://schema.org/PreOrder",
+    "url":"https://www.lutherclothing.com/assets/products/bone-tee.html"
   }
-  </script>
+}
+</script>
 
   <script>document.documentElement.classList.add('js');</script>
 
@@ -340,7 +401,11 @@
         <div class="sub">ESSENTIALS</div>
         <div class="price">$49,99</div>
 
-        <div class="sub" style="margin-bottom:8px">Select Size</div>
+        <div class="size-row">
+  <div class="sub" style="margin-bottom:8px">Select Size</div>
+  <button type="button" class="sizechart-link" id="openSizeChart">Size chart</button>
+</div>
+
         <div class="chips" id="sizeChips" role="group" aria-label="Choose a size">
           <button class="chip" type="button" data-val="S"  aria-pressed="false">S</button>
           <button class="chip" type="button" data-val="M"  aria-pressed="false">M</button>
@@ -421,6 +486,15 @@
       </button>
     </div>
   </div>
+
+  <div id="sizeChartModal" aria-hidden="true" role="dialog" aria-label="Size chart" style="display:none">
+  <div class="sizechart-card">
+    <!-- X button in the top-right of the image -->
+    <button class="sizechart-close" id="closeSizeChart" aria-label="Close size chart">×</button>
+    <img src="/assets/sizeCharts/boxyTeeSizes.png" alt="Size chart — Boxy Hoodie">
+  </div>
+</div>
+
 
   <!-- ====== SCRIPTS ====== -->
   <script>
@@ -755,6 +829,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+</script>
+
+  <script>
+  // Size chart modal
+  const sizeChartModal = document.getElementById('sizeChartModal');
+  const openSizeChart  = document.getElementById('openSizeChart');
+  const closeSizeChart = document.getElementById('closeSizeChart');
+
+  function openSC(){
+    sizeChartModal.style.display = 'flex';
+    requestAnimationFrame(() => sizeChartModal.classList.add('show'));
+    document.body.classList.add('menu-open'); // reuse body lock style
+  }
+  function closeSC(){
+    sizeChartModal.classList.remove('show');
+    document.body.classList.remove('menu-open');
+    sizeChartModal.addEventListener('transitionend', () => {
+      sizeChartModal.style.display = 'none';
+    }, { once:true });
+  }
+
+  openSizeChart.addEventListener('click', openSC);
+  closeSizeChart.addEventListener('click', closeSC);
+  sizeChartModal.addEventListener('click', (e) => { if (e.target === sizeChartModal) closeSC(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sizeChartModal.classList.contains('show')) closeSC();
+  });
 </script>
 </body>
 </html>
