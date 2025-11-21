@@ -65,6 +65,40 @@
     .product-image:hover .front { opacity: 0; }
     .product-image:hover .back { opacity: 1; }
 
+    /* PRELAUNCH STATE – blur products + show "LAUNCHING SOON" */
+
+body.prelaunch .product-image img {
+  filter: blur(10px);
+  transform: scale(1.03);
+  transition: filter .3s ease, transform .3s ease, opacity .3s ease;
+}
+
+/* stop the hover flip effect while blurred */
+body.prelaunch .product-image:hover .front,
+body.prelaunch .product-image:hover .back {
+  opacity: 1;
+}
+
+/* overlay text on top of blurred images */
+body.prelaunch .product-image::after {
+  content: 'LAUNCHING SOON';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 14px;
+  font-size: .7rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #111;
+  background: rgba(250,249,246,0.55); /* soft veil over the product */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+
     /* SECTION PADDING: stick to sides */
     #productSection { padding: 0; }
 
@@ -339,6 +373,23 @@
     const mobileProductsBtn = document.getElementById('mobileProductsBtn');
     const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
     const heroSection = document.querySelector('.hero');
+
+    // ---- PRELAUNCH TOGGLE ----
+    // Set to true while products are not live. Change to false when you launch.
+    const PRELAUNCH = true;
+
+    if (PRELAUNCH) {
+      // Add class so CSS can blur + overlay "LAUNCHING SOON"
+      document.body.classList.add('prelaunch');
+
+      // Disable navigation on product cards (but keep markup intact)
+      document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+        });
+        card.style.cursor = 'default';
+      });
+    }
 
     // Header theme toggle
     function setHeaderState(isTransparent) {
