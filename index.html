@@ -374,22 +374,32 @@ body.prelaunch .product-image::after {
     const mobileWishlistBtn = document.getElementById('mobileWishlistBtn');
     const heroSection = document.querySelector('.hero');
 
-    // ---- PRELAUNCH TOGGLE ----
-    // Set to true while products are not live. Change to false when you launch.
-    const PRELAUNCH = true;
-
     if (PRELAUNCH) {
-      // Add class so CSS can blur + overlay "LAUNCHING SOON"
-      document.body.classList.add('prelaunch');
+  // Add class so CSS can blur + overlay "LAUNCHING SOON"
+  document.body.classList.add('prelaunch');
 
-      // Disable navigation on product cards (but keep markup intact)
-      document.querySelectorAll('.product-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          e.preventDefault();
-        });
-        card.style.cursor = 'default';
-      });
+  // Fully disable navigation on product cards
+  document.querySelectorAll('.product-card').forEach(card => {
+    // 1) Remove the href so the browser has nothing to open
+    const href = card.getAttribute('href');
+    if (href) {
+      card.dataset.href = href;  // store it if you ever need it later
+      card.removeAttribute('href');
     }
+
+    // 2) Just in case, block normal & middle-click
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+    });
+    card.addEventListener('auxclick', (e) => {
+      e.preventDefault();
+    });
+
+    // 3) Make cursor not look like a link
+    card.style.cursor = 'default';
+  });
+}
+
 
     // Header theme toggle
     function setHeaderState(isTransparent) {
