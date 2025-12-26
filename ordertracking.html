@@ -300,6 +300,26 @@
       cursor: pointer;
       transition: background .2s ease, border-color .2s ease, transform .05s ease;
     }
+    .size-btn {
+  position: relative;
+}
+
+/* little count bubble */
+.size-btn .count {
+  display: none;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.35);
+  font-size: .7rem;
+  letter-spacing: .02em;
+  font-weight: 500;
+}
+
+.size-btn.active .count {
+  display: inline-block;
+}
+
     .size-btn:active { transform: scale(0.98); }
 
     .size-btn.active {
@@ -563,80 +583,131 @@
     const submitBtn = document.getElementById('submitBtn');
 
     function renderProducts() {
-      productsEl.innerHTML = "";
+  productsEl.innerHTML = "";
 
-      PRODUCTS.forEach((p, idx) => {
-        const tile = document.createElement("div");
-        tile.className = "product-tile";
-        tile.dataset.idx = String(idx);
+  PRODUCTS.forEach((p, idx) => {
+    const tile = document.createElement("div");
+    tile.className = "product-tile";
+    tile.dataset.idx = String(idx);
 
-        tile.innerHTML = `
-          <div class="img" role="button" aria-label="Toggle ${escapeHtml(p.name)}">
-            <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" />
-            <div class="label">
-              <div class="name">${escapeHtml(p.name)}</div>
-              <div class="state" id="state_${idx}">Not selected</div>
-            </div>
-          </div>
+    tile.innerHTML = `
+      <div class="img" role="button" aria-label="Toggle ${escapeHtml(p.name)}">
+        <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" />
+        <div class="label">
+          <div class="name">${escapeHtml(p.name)}</div>
+          <div class="state" id="state_${idx}">Not selected</div>
+        </div>
+      </div>
 
-          <div class="size-wrap">
-            <div class="size-row" id="sizes_${idx}">
-              ${p.sizes.map(sz => `
-                <button type="button" class="size-btn" data-size="${escapeHtml(sz)}">${escapeHtml(sz)}</button>
-              `).join("")}
-            </div>
-            <div class="size-hint">Select one or more sizes</div>
-          </div>
-        `;
+      <div class="size-wrap">
+        <div class="size-row" id="sizes_${idx}">
+          ${p.sizes.map(sz => `
+            <button
+              type="button"
+              class="size-btn"
+              data-size="${escapeHtml(sz)}"
+              data-count="0"
+              aria-label="${escapeHtml(p.name)} size ${escapeHtml(sz)}"
+            >
+              <span class="labelTxt">${escapeHtml(sz)}</span>
+              <span class="count">0</span>
+            </button>
+          `).join("")}
+        </div>
+        <div class="size-hint">Click to add • Shift+Click to remove</div>
+      </div>
+    `;
 
-        tile.querySelector(".img").addEventListener("click", () => {
-          const isSelected = tile.classList.toggle("selected");
-          if (!isSelected) {
-            tile.querySelectorAll(".size-btn.active").forEach(btn => btn.classList.remove("active"));
-          }
-          syncTileState(idx);
-        });
+    // Clicking image toggles product on/off (off clears counts)
+    tile.querySelector(".img").addEventListener("click", () => {
+      const isSelected = tile.classList.toggle("selected");
 
+      if (!isSelected) {
         tile.querySelectorAll(".size-btn").forEach(btn => {
-          btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            btn.classList.toggle("active");
-
-            const hasAny = tile.querySelectorAll(".size-btn.active").length > 0;
-            if (hasAny) tile.classList.add("selected");
-            if (!hasAny) tile.classList.remove("selected");
-
-            syncTileState(idx);
-          });
+          btn.dataset.count = "0";
+          btn.classList.remove("active");
+          btn.querySelector(".count").textContent = "0";
         });
+      }
+      syncTileState(idx);
+    });
 
-        productsEl.appendChild(tile);
+    // Size buttons = quantity control
+    tile.querySelectorAll(".size-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        let count = Number(btn.dataset.count || "0");
+
+        // Shift+click decreases
+        if (e.shiftKey) count = Math.max(0, count - 1);
+        else count = count + 1;
+
+        btn.dataset.count = String(count);
+        btn.querySelector(".count").textContent = String(count);
+
+        if (count > 0) btn.classList.add("active");
+        else btn.classList.remove("active");
+
+        // If any size count > 0, mark tile selected; otherwise unselect
+        const total = Array.from(tile.querySelectorAll(".size-btn"))
+          .reduce((sum, b) => sum + Number(b.dataset.count || "0"), 0);
+
+        if (total > 0) tile.classList.add("selected");
+        else tile.classList.remove("selected");
+
         syncTileState(idx);
       });
-    }
+    });
 
-    function syncTileState(idx) {
-      const tile = productsEl.querySelector(`.product-tile[data-idx="${idx}"]`);
-      const stateEl = document.getElementById(`state_${idx}`);
-      const selected = tile.classList.contains("selected");
-      const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
+    productsEl.appendChild(tile);
+    syncTileState(idx);
+  });
+}
 
-      if (!selected) stateEl.textContent = "Not selected";
-      else stateEl.textContent = sizes.length ? `Sizes: ${sizes.join(", ")}` : "Selected";
-    }
+function syncTileState(idx) {
+  const tile = productsEl.querySelector(`.product-tile[data-idx="${idx}"]`);
+  const stateEl = document.getElementById(`state_${idx}`);
+  const selected = tile.classList.contains("selected");
 
-    function getSelectedItems() {
-      const items = [];
-      productsEl.querySelectorAll(".product-tile").forEach(tile => {
-        const idx = Number(tile.dataset.idx);
-        const selected = tile.classList.contains("selected");
-        if (!selected) return;
+  const btns = Array.from(tile.querySelectorAll(".size-btn"));
+  const picked = btns
+    .map(b => ({ size: b.dataset.size, count: Number(b.dataset.count || "0") }))
+    .filter(x => x.count > 0);
 
-        const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
-        items.push({ product: PRODUCTS[idx].name, sizes });
-      });
-      return items;
-    }
+  const totalQty = picked.reduce((sum, x) => sum + x.count, 0);
+
+  if (!selected || totalQty === 0) {
+    stateEl.textContent = "Not selected";
+  } else {
+    // Example: "Qty 3" or "S×2, M×1"
+    const short = picked.map(x => `${x.size}×${x.count}`).join(", ");
+    stateEl.textContent = `Qty ${totalQty} • ${short}`;
+  }
+}
+
+function getSelectedItems() {
+  const items = [];
+
+  productsEl.querySelectorAll(".product-tile").forEach(tile => {
+    const idx = Number(tile.dataset.idx);
+
+    const sizes = Array.from(tile.querySelectorAll(".size-btn"))
+      .map(b => ({ size: b.dataset.size, qty: Number(b.dataset.count || "0") }))
+      .filter(x => x.qty > 0);
+
+    const totalQty = sizes.reduce((sum, s) => sum + s.qty, 0);
+    if (totalQty === 0) return;
+
+    items.push({
+      product: PRODUCTS[idx].name,
+      totalQty,
+      sizes // example: [{size:"S", qty:2}, {size:"M", qty:1}]
+    });
+  });
+
+  return items;
+}
 
     function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, s => ({
@@ -667,7 +738,7 @@
         return;
       }
 
-      const hasEmptySizes = items.some(i => !i.sizes || i.sizes.length === 0);
+      const hasEmptySizes = items.some(i => !i.sizes || i.sizes.length === 0 || i.totalQty <= 0);
       if (hasEmptySizes) {
         statusEl.textContent = "Pick at least one size for each selected product.";
         submitBtn.disabled = false;
