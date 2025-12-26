@@ -716,16 +716,24 @@ function getSelectedItems() {
     }
 
     async function postFormUrlEncoded(payloadObj) {
-      const body = new URLSearchParams();
-      Object.entries(payloadObj).forEach(([k, v]) => body.append(k, typeof v === 'string' ? v : JSON.stringify(v)));
+  const body = new URLSearchParams();
+  Object.entries(payloadObj).forEach(([k, v]) => body.append(k, typeof v === 'string' ? v : JSON.stringify(v)));
 
-      const res = await fetch(ORDER_WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-      });
-      return await res.json();
-    }
+  const res = await fetch(ORDER_WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body
+  });
+
+  const text = await res.text(); // read raw text first
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error("Non-JSON response from Apps Script:", text);
+    throw new Error("Apps Script returned non-JSON (check deployment access/URL).");
+  }
+}
+
 
     submitBtn.addEventListener('click', async () => {
       statusEl.textContent = "";
@@ -762,10 +770,10 @@ function getSelectedItems() {
         if (out.status === "success" || out.ok === true) {
           statusEl.textContent = "Saved.";
           await refreshAnalytics();
-        } else {
-          statusEl.textContent = "Error saving order.";
-          console.error(out);
-        }
+       } else {
+  statusEl.textContent = "Error: " + (out.message || "Saving failed.");
+  console.error(out);
+}
       } catch (e) {
         console.error(e);
         statusEl.textContent = "Error saving order.";
