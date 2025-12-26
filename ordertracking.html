@@ -280,6 +280,117 @@
       background: var(--bg);
       letter-spacing: .08em;
     }
+    /* PRODUCTS: image-select tiles + size buttons */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (min-width: 900px) {
+  .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.product-tile {
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FAF9F6;
+}
+
+.product-tile .img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  cursor: pointer;
+}
+.product-tile .img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .25s ease, filter .25s ease;
+}
+.product-tile .img:hover img { transform: scale(1.03); }
+
+/* Name overlay */
+.product-tile .label {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  background: rgba(250,249,246,0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.product-tile .label .name {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #111;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.product-tile .label .state {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: #111;
+  font-weight: 300;
+  opacity: .8;
+}
+
+/* selected state */
+.product-tile.selected {
+  outline: 1px solid rgba(0,0,0,0.5);
+  outline-offset: 2px;
+}
+.product-tile.selected .img img { filter: contrast(1.05); }
+
+/* size buttons */
+.size-wrap { padding: 12px; }
+.size-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.size-btn {
+  padding: 10px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.18);
+  background: transparent;
+  color: #111;
+  font-size: .75rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .05s ease;
+}
+.size-btn:active { transform: scale(0.98); }
+
+.size-btn.active {
+  background: rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.55);
+  font-weight: 500;
+}
+
+.size-hint {
+  margin-top: 10px;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #777;
+  font-weight: 300;
+}
+
+    
   </style>
 </head>
 
@@ -349,7 +460,7 @@
 
         <div style="margin-top:14px;">
           <h3 style="margin-bottom:10px;">Products</h3>
-          <div class="product-grid" id="products"></div>
+          <div class="products-grid" id="products"></div>
           <p class="muted" style="margin-top:10px;">Tip: hold Ctrl / Cmd to select multiple sizes.</p>
         </div>
 
@@ -414,11 +525,11 @@
 
     // Your 4 products + size options
     const PRODUCTS = [
-      { name: "Onyx Black Hoodie", sizes: ["XS","S","M","L","XL","XXL"] },
-      { name: "Root Brown Hoodie", sizes: ["XS","S","M","L","XL","XXL"] },
-      { name: "Onyx Black Tee",    sizes: ["XS","S","M","L","XL","XXL"] },
-      { name: "Bone Tee",          sizes: ["XS","S","M","L","XL","XXL"] },
-    ];
+  { name: "Onyx Black Hoodie", image: "assets/products/essentials/onyx-hoodie/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+  { name: "Root Brown Hoodie", image: "assets/products/essentials/brown-hoodie/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+  { name: "Onyx Black Tee",    image: "assets/products/essentials/onyx-tee/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+  { name: "Bone Tee",          image: "assets/products/essentials/bone-tee/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+];
 
     // ---------- HEADER THEME TOGGLE (matches your style) ----------
     const header = document.getElementById('header');
@@ -516,40 +627,94 @@
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
 
-    function renderProducts() {
-      productsEl.innerHTML = "";
-      PRODUCTS.forEach((p, idx) => {
-        const tile = document.createElement('div');
-        tile.className = 'product-tile';
-        tile.innerHTML = `
-          <div class="row">
-            <label style="margin:0; display:flex; align-items:center;">
-              <input type="checkbox" id="prod_${idx}" />
-              <span class="name">${p.name}</span>
-            </label>
-          </div>
-          <div style="margin-top:10px;">
-            <label>Sizes (multi-select)</label>
-            <select id="sizes_${idx}" multiple>
-              ${p.sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
-            </select>
-          </div>
-        `;
-        productsEl.appendChild(tile);
-      });
-    }
+    const productsEl = document.getElementById('products');
 
-    function getSelectedItems() {
-      const items = [];
-      PRODUCTS.forEach((p, idx) => {
-        const checked = document.getElementById(`prod_${idx}`).checked;
-        if (!checked) return;
-        const sel = document.getElementById(`sizes_${idx}`);
-        const sizes = Array.from(sel.selectedOptions).map(o => o.value);
-        items.push({ product: p.name, sizes });
+function renderProducts() {
+  productsEl.innerHTML = "";
+
+  PRODUCTS.forEach((p, idx) => {
+    const tile = document.createElement("div");
+    tile.className = "product-tile";
+    tile.dataset.idx = String(idx);
+
+    tile.innerHTML = `
+      <div class="img" role="button" aria-label="Toggle ${escapeHtml(p.name)}">
+        <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" />
+        <div class="label">
+          <div class="name">${escapeHtml(p.name)}</div>
+          <div class="state" id="state_${idx}">Not selected</div>
+        </div>
+      </div>
+
+      <div class="size-wrap">
+        <div class="size-row" id="sizes_${idx}">
+          ${p.sizes.map(sz => `
+            <button type="button" class="size-btn" data-size="${escapeHtml(sz)}">${escapeHtml(sz)}</button>
+          `).join("")}
+        </div>
+        <div class="size-hint">Select one or more sizes</div>
+      </div>
+    `;
+
+    // Toggle product when clicking image
+    tile.querySelector(".img").addEventListener("click", () => {
+      const isSelected = tile.classList.toggle("selected");
+
+      // If turning OFF, clear sizes
+      if (!isSelected) {
+        tile.querySelectorAll(".size-btn.active").forEach(btn => btn.classList.remove("active"));
+      }
+      syncTileState(idx);
+    });
+
+    // Size buttons (multi-select)
+    tile.querySelectorAll(".size-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        btn.classList.toggle("active");
+
+        const hasAny = tile.querySelectorAll(".size-btn.active").length > 0;
+        if (hasAny) tile.classList.add("selected");
+        if (!hasAny) tile.classList.remove("selected");
+
+        syncTileState(idx);
       });
-      return items;
-    }
+    });
+
+    productsEl.appendChild(tile);
+    syncTileState(idx);
+  });
+}
+
+function syncTileState(idx) {
+  const tile = productsEl.querySelector(`.product-tile[data-idx="${idx}"]`);
+  const stateEl = document.getElementById(`state_${idx}`);
+  const selected = tile.classList.contains("selected");
+  const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
+
+  if (!selected) stateEl.textContent = "Not selected";
+  else stateEl.textContent = sizes.length ? `Sizes: ${sizes.join(", ")}` : "Selected";
+}
+
+function getSelectedItems() {
+  const items = [];
+  productsEl.querySelectorAll(".product-tile").forEach(tile => {
+    const idx = Number(tile.dataset.idx);
+    const selected = tile.classList.contains("selected");
+    if (!selected) return;
+
+    const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
+    items.push({ product: PRODUCTS[idx].name, sizes });
+  });
+  return items;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[s]));
+}
+
 
     // CORS-safe POST (URL-encoded like your existing form)
     async function postFormUrlEncoded(payloadObj) {
@@ -574,6 +739,13 @@
         submitBtn.disabled = false;
         return;
       }
+      const hasEmptySizes = items.some(i => !i.sizes || i.sizes.length === 0);
+if (hasEmptySizes) {
+  statusEl.textContent = "Pick at least one size for each selected product.";
+  submitBtn.disabled = false;
+  return;
+}
+
 
       try {
         const payload = {
