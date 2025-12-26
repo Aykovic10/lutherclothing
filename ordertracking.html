@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LUTHER - Orders</title>
 
+  <!-- Light mode favicons (use -b / black logos) -->
+  <link rel="icon" type="image/png" href="assets/icons/favicon-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32-b.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16-b.png" media="(prefers-color-scheme: light)">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon-b.png" media="(prefers-color-scheme: light)">
+
+  <!-- Dark mode favicons (use normal / white logos) -->
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" media="(prefers-color-scheme: dark)">
+
   <!-- Self-hosted display font -->
   <link rel="preload" href="assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
 
@@ -24,8 +36,6 @@
       --bg: #FAF9F6;
       --ink: #111;
       --muted: #666;
-      --line: rgba(0,0,0,0.12);
-      --glass: rgba(255,255,255,0.06);
       --heroTex: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png');
     }
 
@@ -138,7 +148,6 @@
       background: #FAF9F6;
       padding: 16px;
     }
-    .card + .card{ margin-top: 14px; }
 
     .card h3{
       font-family: 'LutherHeavy', var(--text);
@@ -159,14 +168,14 @@
     label{
       display:block;
       font-size: .7rem;
-      color: var(--muted);
+      color: #666;
       text-transform: uppercase;
       letter-spacing: .12em;
       margin-bottom: 6px;
       font-weight: 300;
     }
 
-    input, textarea, select{
+    input, textarea{
       width:100%;
       padding: 12px 12px;
       border: 1px solid rgba(0,0,0,0.15);
@@ -201,77 +210,122 @@
     }
     .btn:disabled{ opacity: .6; cursor:not-allowed; }
 
-    /* Products selector */
-    .product-grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
+    /* PRODUCTS: image-select tiles + size buttons */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
-    @media (min-width: 900px){ .product-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
-    .product-tile{
-      border: 1px dashed rgba(0,0,0,0.22);
-      border-radius: 10px;
-      padding: 12px;
+    @media (min-width: 900px) {
+      .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .product-tile {
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 12px;
+      overflow: hidden;
       background: #FAF9F6;
     }
-    .product-tile .name{
-      font-size: .8rem;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--ink);
-      font-weight: 600;
-      margin-left: 8px;
+
+    .product-tile .img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      cursor: pointer;
     }
-    .product-tile select{ margin-top: 10px; }
+    .product-tile .img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .25s ease, filter .25s ease;
+    }
+    .product-tile .img:hover img { transform: scale(1.03); }
+
+    .product-tile .label {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      padding: 10px 10px;
+      border-radius: 10px;
+      background: rgba(250,249,246,0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .product-tile .label .name {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #111;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .product-tile .label .state {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #111;
+      font-weight: 300;
+      opacity: .8;
+    }
+
+    .product-tile.selected {
+      outline: 1px solid rgba(0,0,0,0.5);
+      outline-offset: 2px;
+    }
+    .product-tile.selected .img img { filter: contrast(1.05); }
+
+    .size-wrap { padding: 12px; }
+    .size-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .size-btn {
+      padding: 10px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.18);
+      background: transparent;
+      color: #111;
+      font-size: .75rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: .10em;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease, transform .05s ease;
+    }
+    .size-btn:active { transform: scale(0.98); }
+
+    .size-btn.active {
+      background: rgba(0,0,0,0.06);
+      border-color: rgba(0,0,0,0.55);
+      font-weight: 500;
+    }
+
+    .size-hint {
+      margin-top: 10px;
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #777;
+      font-weight: 300;
+    }
 
     /* Analytics */
-    .kpi{
-      display:flex; gap: 16px; flex-wrap: wrap;
-      padding: 10px 0 6px;
-    }
-    .kpi .box{
-      border: 1px solid rgba(0,0,0,0.12);
-      border-radius: 10px;
-      padding: 12px 14px;
-      min-width: 160px;
-    }
-    .kpi .val{
-      font-family:'LutherHeavy', var(--text);
-      font-weight: 900;
-      font-size: 1.4rem;
-      color: var(--ink);
-      letter-spacing: .04em;
-    }
-    .kpi .lab{
-      margin-top: 6px;
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color:#666;
-      font-weight: 300;
-    }
+    .kpi{ display:flex; gap: 16px; flex-wrap: wrap; padding: 10px 0 6px; }
+    .kpi .box{ border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; padding: 12px 14px; min-width: 160px; }
+    .kpi .val{ font-family:'LutherHeavy', var(--text); font-weight: 900; font-size: 1.4rem; color: var(--ink); letter-spacing: .04em; }
+    .kpi .lab{ margin-top: 6px; font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color:#666; font-weight: 300; }
 
-    .table{
-      width:100%;
-      border-collapse: collapse;
-      overflow:hidden;
-      border-radius: 10px;
-      border: 1px solid rgba(0,0,0,0.10);
-    }
-    .table th, .table td{
-      padding: 12px;
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-      text-align:left;
-      font-size: .85rem;
-    }
-    .table th{
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color:#555;
-      font-weight: 300;
-      background: rgba(0,0,0,0.02);
-    }
+    .table{ width:100%; border-collapse: collapse; overflow:hidden; border-radius: 10px; border: 1px solid rgba(0,0,0,0.10); }
+    .table th, .table td{ padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.08); text-align:left; font-size: .85rem; }
+    .table th{ font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color:#555; font-weight: 300; background: rgba(0,0,0,0.02); }
 
     footer{
       text-align:center; padding: 40px 20px;
@@ -280,122 +334,10 @@
       background: var(--bg);
       letter-spacing: .08em;
     }
-    /* PRODUCTS: image-select tiles + size buttons */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-@media (min-width: 900px) {
-  .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-
-.product-tile {
-  border: 1px solid rgba(0,0,0,0.12);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #FAF9F6;
-}
-
-.product-tile .img {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  cursor: pointer;
-}
-.product-tile .img img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .25s ease, filter .25s ease;
-}
-.product-tile .img:hover img { transform: scale(1.03); }
-
-/* Name overlay */
-.product-tile .label {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  padding: 10px 10px;
-  border-radius: 10px;
-  background: rgba(250,249,246,0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(0,0,0,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.product-tile .label .name {
-  font-size: .75rem;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  color: #111;
-  font-weight: 600;
-  line-height: 1.2;
-}
-.product-tile .label .state {
-  font-size: .65rem;
-  text-transform: uppercase;
-  letter-spacing: .14em;
-  color: #111;
-  font-weight: 300;
-  opacity: .8;
-}
-
-/* selected state */
-.product-tile.selected {
-  outline: 1px solid rgba(0,0,0,0.5);
-  outline-offset: 2px;
-}
-.product-tile.selected .img img { filter: contrast(1.05); }
-
-/* size buttons */
-.size-wrap { padding: 12px; }
-.size-row { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.size-btn {
-  padding: 10px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.18);
-  background: transparent;
-  color: #111;
-  font-size: .75rem;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: .10em;
-  cursor: pointer;
-  transition: background .2s ease, border-color .2s ease, transform .05s ease;
-}
-.size-btn:active { transform: scale(0.98); }
-
-.size-btn.active {
-  background: rgba(0,0,0,0.06);
-  border-color: rgba(0,0,0,0.55);
-  font-weight: 500;
-}
-
-.size-hint {
-  margin-top: 10px;
-  font-size: .65rem;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  color: #777;
-  font-weight: 300;
-}
-
-    
   </style>
 </head>
 
 <body>
-  <!-- Header -->
   <header id="header" style="background-color: transparent; backdrop-filter: none;">
     <a href="#" id="leftLink" style="position:absolute; left:20px; color:white; font-size:.8rem; font-weight:300; text-transform:uppercase; text-decoration:none; letter-spacing:.06em;">Back</a>
     <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;" src="assets/logos/lutherTextWhite.png" alt="Luther Logo">
@@ -408,19 +350,16 @@
     </div>
   </header>
 
-  <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
     <a href="#" id="mobileOrdersBtn">Orders</a>
     <a href="#" id="mobileAnalyticsBtn">Analytics</a>
   </nav>
 
-  <!-- Hero -->
   <section class="hero" id="hero">
     <h1>Orders Console</h1>
     <p>Internal order capture + sheet sync</p>
   </section>
 
-  <!-- Content -->
   <main>
     <div class="wrap">
       <div class="section-heading">
@@ -454,14 +393,14 @@
           </div>
           <div>
             <label>Notes</label>
-            <textarea id="notes" placeholder=""></textarea>
+            <textarea id="notes"></textarea>
           </div>
         </div>
 
         <div style="margin-top:14px;">
           <h3 style="margin-bottom:10px;">Products</h3>
           <div class="products-grid" id="products"></div>
-          <p class="muted" style="margin-top:10px;">Tip: hold Ctrl / Cmd to select multiple sizes.</p>
+          <p class="muted" style="margin-top:10px;">Select one or more sizes under a product.</p>
         </div>
 
         <div class="row" style="margin-top:14px;">
@@ -520,18 +459,17 @@
 
   <script>
     // ---------- CONFIG ----------
-    // Replace with your Orders Apps Script Web App URL (not the early access one)
     const ORDER_WEB_APP_URL = "PASTE_YOUR_ORDERS_WEB_APP_URL_HERE";
 
-    // Your 4 products + size options
+    // Use exactly your product image paths
     const PRODUCTS = [
-  { name: "Onyx Black Hoodie", image: "assets/products/essentials/onyx-hoodie/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
-  { name: "Root Brown Hoodie", image: "assets/products/essentials/brown-hoodie/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
-  { name: "Onyx Black Tee",    image: "assets/products/essentials/onyx-tee/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
-  { name: "Bone Tee",          image: "assets/products/essentials/bone-tee/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
-];
+      { name: "Onyx Black Hoodie", image: "assets/products/essentials/onyx-hoodie/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+      { name: "Root Brown Hoodie", image: "assets/products/essentials/brown-hoodie/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+      { name: "Onyx Black Tee",    image: "assets/products/essentials/onyx-tee/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+      { name: "Bone Tee",          image: "assets/products/essentials/bone-tee/front.png", sizes: ["XS","S","M","L","XL","XXL"] },
+    ];
 
-    // ---------- HEADER THEME TOGGLE (matches your style) ----------
+    // ---------- HEADER THEME TOGGLE ----------
     const header = document.getElementById('header');
     const headerLogo = document.getElementById('headerLogo');
     const heroSection = document.getElementById('hero');
@@ -555,10 +493,8 @@
     }, { threshold: 0.5 });
     observer.observe(heroSection);
 
-    // Logo click = scroll to top
     headerLogo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    // Nav scrolling
     const ordersBtn = document.getElementById('ordersBtn');
     const analyticsBtn = document.getElementById('analyticsBtn');
     ordersBtn && ordersBtn.addEventListener('click', (e) => {
@@ -616,7 +552,6 @@
       document.getElementById('analyticsSection').scrollIntoView({ behavior: 'smooth' });
     });
 
-    // "Back" link (default: back)
     document.getElementById('leftLink').addEventListener('click', (e) => {
       e.preventDefault();
       history.back();
@@ -627,96 +562,88 @@
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
 
-    const productsEl = document.getElementById('products');
+    function renderProducts() {
+      productsEl.innerHTML = "";
 
-function renderProducts() {
-  productsEl.innerHTML = "";
+      PRODUCTS.forEach((p, idx) => {
+        const tile = document.createElement("div");
+        tile.className = "product-tile";
+        tile.dataset.idx = String(idx);
 
-  PRODUCTS.forEach((p, idx) => {
-    const tile = document.createElement("div");
-    tile.className = "product-tile";
-    tile.dataset.idx = String(idx);
+        tile.innerHTML = `
+          <div class="img" role="button" aria-label="Toggle ${escapeHtml(p.name)}">
+            <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" />
+            <div class="label">
+              <div class="name">${escapeHtml(p.name)}</div>
+              <div class="state" id="state_${idx}">Not selected</div>
+            </div>
+          </div>
 
-    tile.innerHTML = `
-      <div class="img" role="button" aria-label="Toggle ${escapeHtml(p.name)}">
-        <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" />
-        <div class="label">
-          <div class="name">${escapeHtml(p.name)}</div>
-          <div class="state" id="state_${idx}">Not selected</div>
-        </div>
-      </div>
+          <div class="size-wrap">
+            <div class="size-row" id="sizes_${idx}">
+              ${p.sizes.map(sz => `
+                <button type="button" class="size-btn" data-size="${escapeHtml(sz)}">${escapeHtml(sz)}</button>
+              `).join("")}
+            </div>
+            <div class="size-hint">Select one or more sizes</div>
+          </div>
+        `;
 
-      <div class="size-wrap">
-        <div class="size-row" id="sizes_${idx}">
-          ${p.sizes.map(sz => `
-            <button type="button" class="size-btn" data-size="${escapeHtml(sz)}">${escapeHtml(sz)}</button>
-          `).join("")}
-        </div>
-        <div class="size-hint">Select one or more sizes</div>
-      </div>
-    `;
+        tile.querySelector(".img").addEventListener("click", () => {
+          const isSelected = tile.classList.toggle("selected");
+          if (!isSelected) {
+            tile.querySelectorAll(".size-btn.active").forEach(btn => btn.classList.remove("active"));
+          }
+          syncTileState(idx);
+        });
 
-    // Toggle product when clicking image
-    tile.querySelector(".img").addEventListener("click", () => {
-      const isSelected = tile.classList.toggle("selected");
+        tile.querySelectorAll(".size-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            btn.classList.toggle("active");
 
-      // If turning OFF, clear sizes
-      if (!isSelected) {
-        tile.querySelectorAll(".size-btn.active").forEach(btn => btn.classList.remove("active"));
-      }
-      syncTileState(idx);
-    });
+            const hasAny = tile.querySelectorAll(".size-btn.active").length > 0;
+            if (hasAny) tile.classList.add("selected");
+            if (!hasAny) tile.classList.remove("selected");
 
-    // Size buttons (multi-select)
-    tile.querySelectorAll(".size-btn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        btn.classList.toggle("active");
+            syncTileState(idx);
+          });
+        });
 
-        const hasAny = tile.querySelectorAll(".size-btn.active").length > 0;
-        if (hasAny) tile.classList.add("selected");
-        if (!hasAny) tile.classList.remove("selected");
-
+        productsEl.appendChild(tile);
         syncTileState(idx);
       });
-    });
+    }
 
-    productsEl.appendChild(tile);
-    syncTileState(idx);
-  });
-}
+    function syncTileState(idx) {
+      const tile = productsEl.querySelector(`.product-tile[data-idx="${idx}"]`);
+      const stateEl = document.getElementById(`state_${idx}`);
+      const selected = tile.classList.contains("selected");
+      const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
 
-function syncTileState(idx) {
-  const tile = productsEl.querySelector(`.product-tile[data-idx="${idx}"]`);
-  const stateEl = document.getElementById(`state_${idx}`);
-  const selected = tile.classList.contains("selected");
-  const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
+      if (!selected) stateEl.textContent = "Not selected";
+      else stateEl.textContent = sizes.length ? `Sizes: ${sizes.join(", ")}` : "Selected";
+    }
 
-  if (!selected) stateEl.textContent = "Not selected";
-  else stateEl.textContent = sizes.length ? `Sizes: ${sizes.join(", ")}` : "Selected";
-}
+    function getSelectedItems() {
+      const items = [];
+      productsEl.querySelectorAll(".product-tile").forEach(tile => {
+        const idx = Number(tile.dataset.idx);
+        const selected = tile.classList.contains("selected");
+        if (!selected) return;
 
-function getSelectedItems() {
-  const items = [];
-  productsEl.querySelectorAll(".product-tile").forEach(tile => {
-    const idx = Number(tile.dataset.idx);
-    const selected = tile.classList.contains("selected");
-    if (!selected) return;
+        const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
+        items.push({ product: PRODUCTS[idx].name, sizes });
+      });
+      return items;
+    }
 
-    const sizes = Array.from(tile.querySelectorAll(".size-btn.active")).map(b => b.dataset.size);
-    items.push({ product: PRODUCTS[idx].name, sizes });
-  });
-  return items;
-}
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+      }[s]));
+    }
 
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, s => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-  }[s]));
-}
-
-
-    // CORS-safe POST (URL-encoded like your existing form)
     async function postFormUrlEncoded(payloadObj) {
       const body = new URLSearchParams();
       Object.entries(payloadObj).forEach(([k, v]) => body.append(k, typeof v === 'string' ? v : JSON.stringify(v)));
@@ -739,13 +666,13 @@ function escapeHtml(str) {
         submitBtn.disabled = false;
         return;
       }
-      const hasEmptySizes = items.some(i => !i.sizes || i.sizes.length === 0);
-if (hasEmptySizes) {
-  statusEl.textContent = "Pick at least one size for each selected product.";
-  submitBtn.disabled = false;
-  return;
-}
 
+      const hasEmptySizes = items.some(i => !i.sizes || i.sizes.length === 0);
+      if (hasEmptySizes) {
+        statusEl.textContent = "Pick at least one size for each selected product.";
+        submitBtn.disabled = false;
+        return;
+      }
 
       try {
         const payload = {
@@ -790,7 +717,7 @@ if (hasEmptySizes) {
       try {
         const out = await postFormUrlEncoded({ action: "getAnalytics" });
 
-        const data = (out.ok ? out : null) || out; // tolerate either shape
+        const data = (out.ok ? out : null) || out;
         if (!(data && (data.ok || out.status === "success"))) {
           analyticsStatus.textContent = "Analytics unavailable.";
           return;
