@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LUTHER - Orders</title>
+
+  <!-- Self-hosted display font -->
+  <link rel="preload" href="assets/fonts/futura-heavy.otf" as="font" type="font/otf" crossorigin>
+
+  <style>
+    body { background-color: #FAF9F6; }
+
+    @font-face {
+      font-family: 'LutherHeavy';
+      src: url('assets/fonts/futura-heavy.otf') format('opentype');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --text: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --bg: #FAF9F6;
+      --ink: #111;
+      --muted: #666;
+      --line: rgba(0,0,0,0.12);
+      --glass: rgba(255,255,255,0.06);
+      --heroTex: url('https://uploads.onecompiler.io/43vn54brk/43vn542r9/black_texture_1920x1080.png');
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--text); }
+    body, html { height: 100%; overflow-x: hidden; }
+
+    /* Header */
+    header{
+      position: fixed; top: 0; width: 100%; height: 50px;
+      padding: 0 40px; display: flex; justify-content: center; align-items: center;
+      z-index: 1001; background-color: transparent; transition: background-color .3s ease;
+    }
+    .nav-links{ position:absolute; right:40px; display:flex; gap:16px; }
+    header a{
+      text-decoration:none; color:white; font-weight:300; text-transform:uppercase;
+      font-size:.8rem; position:relative; letter-spacing:.06em;
+    }
+    .logo-center{ height: 40px; transition: opacity .3s ease; cursor: pointer; }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none; position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px);
+      background: rgba(255,255,255,0.05) var(--heroTex) no-repeat center center / cover;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; justify-content: center; align-items: center; gap: 30px; z-index: 1000;
+      opacity: 0; visibility: hidden; transform: translateY(-100%);
+      transition: opacity .4s, transform .4s, visibility .4s;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+    }
+    .mobile-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+    .mobile-menu a{
+      color:white; text-decoration:none; font-size: 1.1rem; text-transform: uppercase; font-weight: 300;
+      padding: 10px; letter-spacing: .08em; transition: all .3s ease;
+      text-shadow: 0 0 5px rgba(0,0,0,.3);
+    }
+
+    /* Hamburger */
+    .hamburger{
+      display:none; flex-direction:column; justify-content:center;
+      width:30px; height:25px; cursor:pointer; position:absolute; right:20px; gap:4px; z-index:1002;
+    }
+    .hamburger span{ background:white; height:1px; width:100%; transition: all .3s ease; }
+    .hamburger span:nth-child(3){ display:none; }
+    body.menu-open { overflow: hidden; }
+
+    @media (max-width: 768px){
+      header{ padding:0 20px; }
+      .nav-links{ display:none; }
+      .hamburger{ display:flex; }
+      .logo-center{ position:absolute; left:50%; transform:translateX(-50%); height:30px; z-index:1002; }
+    }
+
+    /* Hero */
+    .hero{
+      background: var(--heroTex) no-repeat center center/cover;
+      height: 55vh; min-height: 380px;
+      position: relative;
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      color:white; text-align:center;
+    }
+    .hero h1{
+      font-family:'LutherHeavy', var(--text);
+      font-weight:900;
+      font-size: clamp(2rem, 4vw + 1rem, 3.2rem);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .hero p{
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: 300;
+      font-family: 'Courier New', Courier, monospace;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      opacity: .92;
+    }
+
+    /* Section heading */
+    .section-heading{ text-align:center; margin: 24px 0 16px; }
+    .section-title{
+      font-family:'LutherHeavy', var(--text);
+      font-weight:900;
+      text-transform:uppercase;
+      text-align:center;
+      letter-spacing:.12em;
+      color: var(--ink);
+      font-size: clamp(1.3rem, 2.5vw + .5rem, 2.2rem);
+      margin: 0 0 6px;
+      line-height:1.05;
+      padding: 0 16px;
+    }
+    .section-subtitle{
+      font-size: .85rem;
+      font-weight: 300;
+      color: #555;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-top: 2px;
+      padding: 0 16px;
+    }
+
+    /* Page content */
+    main{ background: var(--bg); padding: 0; }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 0 16px 60px; }
+
+    /* Cards */
+    .card{
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 10px;
+      background: #FAF9F6;
+      padding: 16px;
+    }
+    .card + .card{ margin-top: 14px; }
+
+    .card h3{
+      font-family: 'LutherHeavy', var(--text);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .95rem;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .muted{ color: #777; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 300; }
+
+    /* Form */
+    .grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    @media (max-width: 860px){ .grid{ grid-template-columns: 1fr; } }
+
+    label{
+      display:block;
+      font-size: .7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 6px;
+      font-weight: 300;
+    }
+
+    input, textarea, select{
+      width:100%;
+      padding: 12px 12px;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink);
+      outline: none;
+      font-size: .9rem;
+    }
+    textarea{ min-height: 110px; resize: vertical; }
+
+    .row{ display:flex; gap: 10px; flex-wrap: wrap; align-items:center; }
+
+    .btn{
+      padding: 12px 18px;
+      font-size: .85rem;
+      font-weight: 500;
+      border: 1px solid var(--ink);
+      border-radius: 5px;
+      background-color: rgba(0,0,0,.02);
+      color: var(--ink);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .btn.primary{
+      background: rgba(255,255,255,.05) var(--heroTex) no-repeat center/cover;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .btn:disabled{ opacity: .6; cursor:not-allowed; }
+
+    /* Products selector */
+    .product-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    @media (min-width: 900px){ .product-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
+    .product-tile{
+      border: 1px dashed rgba(0,0,0,0.22);
+      border-radius: 10px;
+      padding: 12px;
+      background: #FAF9F6;
+    }
+    .product-tile .name{
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--ink);
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .product-tile select{ margin-top: 10px; }
+
+    /* Analytics */
+    .kpi{
+      display:flex; gap: 16px; flex-wrap: wrap;
+      padding: 10px 0 6px;
+    }
+    .kpi .box{
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+      min-width: 160px;
+    }
+    .kpi .val{
+      font-family:'LutherHeavy', var(--text);
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: var(--ink);
+      letter-spacing: .04em;
+    }
+    .kpi .lab{
+      margin-top: 6px;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color:#666;
+      font-weight: 300;
+    }
+
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.10);
+    }
+    .table th, .table td{
+      padding: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      text-align:left;
+      font-size: .85rem;
+    }
+    .table th{
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color:#555;
+      font-weight: 300;
+      background: rgba(0,0,0,0.02);
+    }
+
+    footer{
+      text-align:center; padding: 40px 20px;
+      font-size:.75rem; font-weight:300;
+      text-transform:uppercase; color:#999;
+      background: var(--bg);
+      letter-spacing: .08em;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" style="background-color: transparent; backdrop-filter: none;">
+    <a href="#" id="leftLink" style="position:absolute; left:20px; color:white; font-size:.8rem; font-weight:300; text-transform:uppercase; text-decoration:none; letter-spacing:.06em;">Back</a>
+    <img id="headerLogo" class="logo-center" style="height: 20px; max-height: 20px;" src="assets/logos/lutherTextWhite.png" alt="Luther Logo">
+    <div class="nav-links">
+      <a href="#" id="ordersBtn">Orders</a>
+      <a href="#" id="analyticsBtn">Analytics</a>
+    </div>
+    <div class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="#" id="mobileOrdersBtn">Orders</a>
+    <a href="#" id="mobileAnalyticsBtn">Analytics</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <h1>Orders Console</h1>
+    <p>Internal order capture + sheet sync</p>
+  </section>
+
+  <!-- Content -->
+  <main>
+    <div class="wrap">
+      <div class="section-heading">
+        <h2 class="section-title">Create Order</h2>
+        <p class="section-subtitle">Select products, pick sizes, save to your sheet</p>
+      </div>
+
+      <section class="card" id="ordersSection">
+        <h3>Order Details</h3>
+
+        <div class="grid">
+          <div>
+            <label>First Name</label>
+            <input id="firstName" autocomplete="given-name" />
+          </div>
+          <div>
+            <label>Last Name</label>
+            <input id="lastName" autocomplete="family-name" />
+          </div>
+          <div>
+            <label>Instagram Handle</label>
+            <input id="instagram" placeholder="@..." />
+          </div>
+          <div>
+            <label>Email Address</label>
+            <input id="email" type="email" autocomplete="email" />
+          </div>
+          <div>
+            <label>Phone Number</label>
+            <input id="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div>
+            <label>Notes</label>
+            <textarea id="notes" placeholder=""></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <h3 style="margin-bottom:10px;">Products</h3>
+          <div class="product-grid" id="products"></div>
+          <p class="muted" style="margin-top:10px;">Tip: hold Ctrl / Cmd to select multiple sizes.</p>
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="btn primary" id="submitBtn">Save Order</button>
+          <span class="muted" id="status"></span>
+        </div>
+      </section>
+
+      <div class="section-heading" style="margin-top: 28px;">
+        <h2 class="section-title">Analytics</h2>
+        <p class="section-subtitle">Totals + breakdowns pulled from your sheet</p>
+      </div>
+
+      <section class="card" id="analyticsSection">
+        <h3>Overview</h3>
+
+        <div class="kpi">
+          <div class="box">
+            <div class="val" id="totalOrders">0</div>
+            <div class="lab">Total Orders</div>
+          </div>
+          <div class="box">
+            <div class="val" id="totalItems">0</div>
+            <div class="lab">Total Items</div>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top: 10px;">
+          <div>
+            <h3 style="margin-top: 6px;">By Product</h3>
+            <table class="table" id="productTable">
+              <thead><tr><th>Product</th><th>Count</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div>
+            <h3 style="margin-top: 6px;">By Size</h3>
+            <table class="table" id="sizeTable">
+              <thead><tr><th>Size</th><th>Count</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="btn" id="refreshBtn">Refresh Analytics</button>
+          <span class="muted" id="analyticsStatus"></span>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    © LUTHER CLOTHING LIMITED<br>EST.2025
+  </footer>
+
+  <script>
+    // ---------- CONFIG ----------
+    // Replace with your Orders Apps Script Web App URL (not the early access one)
+    const ORDER_WEB_APP_URL = "PASTE_YOUR_ORDERS_WEB_APP_URL_HERE";
+
+    // Your 4 products + size options
+    const PRODUCTS = [
+      { name: "Onyx Black Hoodie", sizes: ["XS","S","M","L","XL","XXL"] },
+      { name: "Root Brown Hoodie", sizes: ["XS","S","M","L","XL","XXL"] },
+      { name: "Onyx Black Tee",    sizes: ["XS","S","M","L","XL","XXL"] },
+      { name: "Bone Tee",          sizes: ["XS","S","M","L","XL","XXL"] },
+    ];
+
+    // ---------- HEADER THEME TOGGLE (matches your style) ----------
+    const header = document.getElementById('header');
+    const headerLogo = document.getElementById('headerLogo');
+    const heroSection = document.getElementById('hero');
+
+    function setHeaderState(isTransparent) {
+      if (isTransparent) {
+        header.style.backgroundColor = 'transparent';
+        headerLogo.src = 'assets/logos/lutherTextWhite.png';
+        document.querySelectorAll('header a').forEach(a => a.style.color = 'white');
+        document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'white');
+      } else {
+        header.style.backgroundColor = 'white';
+        headerLogo.src = 'assets/logos/lutherTextBlack.png';
+        document.querySelectorAll('header a').forEach(a => a.style.color = 'black');
+        document.querySelectorAll('.hamburger span').forEach(span => span.style.background = 'black');
+      }
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setHeaderState(entry.isIntersecting);
+    }, { threshold: 0.5 });
+    observer.observe(heroSection);
+
+    // Logo click = scroll to top
+    headerLogo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // Nav scrolling
+    const ordersBtn = document.getElementById('ordersBtn');
+    const analyticsBtn = document.getElementById('analyticsBtn');
+    ordersBtn && ordersBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('ordersSection').scrollIntoView({ behavior: 'smooth' });
+    });
+    analyticsBtn && analyticsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('analyticsSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileOrdersBtn = document.getElementById('mobileOrdersBtn');
+    const mobileAnalyticsBtn = document.getElementById('mobileAnalyticsBtn');
+
+    function isHeroMostlyVisible() {
+      const heroRect = heroSection.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const intersectionHeight = Math.min(heroRect.bottom, viewportHeight) - Math.max(heroRect.top, 0);
+      const intersectionRatio = intersectionHeight / heroRect.height;
+      return intersectionRatio >= 0.5;
+    }
+
+    function openMobileMenu() {
+      hamburger.classList.add('active');
+      hamburger.setAttribute('aria-expanded', 'true');
+      mobileMenu.style.display = 'flex';
+      document.body.classList.add('menu-open');
+      requestAnimationFrame(() => mobileMenu.classList.add('show'));
+      setHeaderState(isHeroMostlyVisible());
+    }
+
+    function closeMobileMenu() {
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      mobileMenu.classList.remove('show');
+      document.body.classList.remove('menu-open');
+      setTimeout(() => { mobileMenu.style.display = 'none'; }, 400);
+      setHeaderState(isHeroMostlyVisible());
+    }
+
+    hamburger.addEventListener('click', () => {
+      if (hamburger.classList.contains('active')) closeMobileMenu();
+      else openMobileMenu();
+    });
+
+    mobileOrdersBtn && mobileOrdersBtn.addEventListener('click', (e) => {
+      e.preventDefault(); closeMobileMenu();
+      document.getElementById('ordersSection').scrollIntoView({ behavior: 'smooth' });
+    });
+    mobileAnalyticsBtn && mobileAnalyticsBtn.addEventListener('click', (e) => {
+      e.preventDefault(); closeMobileMenu();
+      document.getElementById('analyticsSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // "Back" link (default: back)
+    document.getElementById('leftLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      history.back();
+    });
+
+    // ---------- ORDER FORM ----------
+    const productsEl = document.getElementById('products');
+    const statusEl = document.getElementById('status');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function renderProducts() {
+      productsEl.innerHTML = "";
+      PRODUCTS.forEach((p, idx) => {
+        const tile = document.createElement('div');
+        tile.className = 'product-tile';
+        tile.innerHTML = `
+          <div class="row">
+            <label style="margin:0; display:flex; align-items:center;">
+              <input type="checkbox" id="prod_${idx}" />
+              <span class="name">${p.name}</span>
+            </label>
+          </div>
+          <div style="margin-top:10px;">
+            <label>Sizes (multi-select)</label>
+            <select id="sizes_${idx}" multiple>
+              ${p.sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
+            </select>
+          </div>
+        `;
+        productsEl.appendChild(tile);
+      });
+    }
+
+    function getSelectedItems() {
+      const items = [];
+      PRODUCTS.forEach((p, idx) => {
+        const checked = document.getElementById(`prod_${idx}`).checked;
+        if (!checked) return;
+        const sel = document.getElementById(`sizes_${idx}`);
+        const sizes = Array.from(sel.selectedOptions).map(o => o.value);
+        items.push({ product: p.name, sizes });
+      });
+      return items;
+    }
+
+    // CORS-safe POST (URL-encoded like your existing form)
+    async function postFormUrlEncoded(payloadObj) {
+      const body = new URLSearchParams();
+      Object.entries(payloadObj).forEach(([k, v]) => body.append(k, typeof v === 'string' ? v : JSON.stringify(v)));
+
+      const res = await fetch(ORDER_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      return await res.json();
+    }
+
+    submitBtn.addEventListener('click', async () => {
+      statusEl.textContent = "";
+      submitBtn.disabled = true;
+
+      const items = getSelectedItems();
+      if (!items.length) {
+        statusEl.textContent = "Select at least one product.";
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const payload = {
+          action: "createOrder",
+          firstName: document.getElementById("firstName").value || "",
+          lastName: document.getElementById("lastName").value || "",
+          instagram: document.getElementById("instagram").value || "",
+          email: document.getElementById("email").value || "",
+          phone: document.getElementById("phone").value || "",
+          notes: document.getElementById("notes").value || "",
+          items
+        };
+
+        const out = await postFormUrlEncoded(payload);
+
+        if (out.status === "success" || out.ok === true) {
+          statusEl.textContent = "Saved.";
+          await refreshAnalytics();
+        } else {
+          statusEl.textContent = "Error saving order.";
+          console.error(out);
+        }
+      } catch (e) {
+        console.error(e);
+        statusEl.textContent = "Error saving order.";
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    // ---------- ANALYTICS ----------
+    const refreshBtn = document.getElementById('refreshBtn');
+    const analyticsStatus = document.getElementById('analyticsStatus');
+
+    function setTableRows(tableId, rows) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      tbody.innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
+    }
+
+    async function refreshAnalytics() {
+      analyticsStatus.textContent = "Refreshing...";
+      try {
+        const out = await postFormUrlEncoded({ action: "getAnalytics" });
+
+        const data = (out.ok ? out : null) || out; // tolerate either shape
+        if (!(data && (data.ok || out.status === "success"))) {
+          analyticsStatus.textContent = "Analytics unavailable.";
+          return;
+        }
+
+        const totals = data.totals || {};
+        document.getElementById('totalOrders').textContent = totals.totalOrders ?? 0;
+        document.getElementById('totalItems').textContent = totals.totalItems ?? 0;
+
+        const prod = data.productCounts || {};
+        const sizes = data.sizeCounts || {};
+
+        const prodRows = Object.entries(prod).sort((a,b)=>b[1]-a[1]);
+        const sizeRows = Object.entries(sizes).sort((a,b)=>b[1]-a[1]);
+
+        setTableRows("productTable", prodRows);
+        setTableRows("sizeTable", sizeRows);
+
+        analyticsStatus.textContent = "Updated.";
+      } catch (e) {
+        console.error(e);
+        analyticsStatus.textContent = "Error loading analytics.";
+      }
+    }
+
+    refreshBtn.addEventListener('click', refreshAnalytics);
+
+    // init
+    renderProducts();
+    refreshAnalytics();
+  </script>
+</body>
+</html>
