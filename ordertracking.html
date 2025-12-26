@@ -285,17 +285,6 @@
     .product-tile.selected .img img { filter: contrast(1.05); }
 
     /* Products area actions */
-.products-area { position: relative; }
-.products-actions {
-  position: absolute;
-  right: 0;
-  bottom: -4px;
-  display: flex;
-  gap: 10px;
-}
-@media (max-width: 520px){
-  .products-actions { position: static; margin-top: 10px; justify-content: flex-end; }
-}
 
 .btn.small {
   padding: 10px 14px;
@@ -437,23 +426,22 @@
           </div>
         </div>
 
-        <div style="margin-top:14px;" class="products-area">
+        <div style="margin-top:14px;"
   <h3 style="margin-bottom:10px;">Products</h3>
 
   <div class="products-grid" id="products"></div>
 
-  <div class="products-actions">
-    <button class="btn small" id="clearProductsBtn" type="button">Clear</button>
-  </div>
+  
 
   <p class="muted" style="margin-top:10px;">Select one or more sizes under a product.</p>
 </div>
 
 
         <div class="row" style="margin-top:14px;">
-          <button class="btn primary" id="submitBtn">Save Order</button>
-          <span class="muted" id="status"></span>
-        </div>
+  <button class="btn primary" id="submitBtn">Save Order</button>
+  <button class="btn" id="clearProductsBtn" type="button">Clear</button>
+  <span class="muted" id="status"></span>
+</div>
 
         <div style="margin-top:18px;">
   <h3 style="margin-top: 6px;">Orders</h3>
