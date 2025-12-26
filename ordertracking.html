@@ -284,6 +284,26 @@
     }
     .product-tile.selected .img img { filter: contrast(1.05); }
 
+    /* Products area actions */
+.products-area { position: relative; }
+.products-actions {
+  position: absolute;
+  right: 0;
+  bottom: -4px;
+  display: flex;
+  gap: 10px;
+}
+@media (max-width: 520px){
+  .products-actions { position: static; margin-top: 10px; justify-content: flex-end; }
+}
+
+.btn.small {
+  padding: 10px 14px;
+  font-size: .75rem;
+  letter-spacing: .10em;
+}
+
+
     .size-wrap { padding: 12px; }
     .size-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
@@ -417,16 +437,40 @@
           </div>
         </div>
 
-        <div style="margin-top:14px;">
-          <h3 style="margin-bottom:10px;">Products</h3>
-          <div class="products-grid" id="products"></div>
-          <p class="muted" style="margin-top:10px;">Select one or more sizes under a product.</p>
-        </div>
+        <div style="margin-top:14px;" class="products-area">
+  <h3 style="margin-bottom:10px;">Products</h3>
+
+  <div class="products-grid" id="products"></div>
+
+  <div class="products-actions">
+    <button class="btn small" id="clearProductsBtn" type="button">Clear</button>
+  </div>
+
+  <p class="muted" style="margin-top:10px;">Select one or more sizes under a product.</p>
+</div>
+
 
         <div class="row" style="margin-top:14px;">
           <button class="btn primary" id="submitBtn">Save Order</button>
           <span class="muted" id="status"></span>
         </div>
+
+        <div style="margin-top:18px;">
+  <h3 style="margin-top: 6px;">Orders</h3>
+  <table class="table" id="ordersTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Items</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p class="muted" style="margin-top:10px;" id="ordersListStatus"></p>
+</div>
+
       </section>
 
       <div class="section-heading" style="margin-top: 28px;">
@@ -581,6 +625,28 @@
     const productsEl = document.getElementById('products');
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
+
+    const clearProductsBtn = document.getElementById('clearProductsBtn');
+
+function clearAllSelections() {
+  productsEl.querySelectorAll(".product-tile").forEach(tile => {
+    tile.classList.remove("selected");
+    tile.querySelectorAll(".size-btn").forEach(btn => {
+      btn.dataset.count = "0";
+      btn.classList.remove("active");
+      const c = btn.querySelector(".count");
+      if (c) c.textContent = "0";
+    });
+    const idx = Number(tile.dataset.idx);
+    syncTileState(idx);
+  });
+}
+
+clearProductsBtn && clearProductsBtn.addEventListener("click", () => {
+  clearAllSelections();
+  statusEl.textContent = "Cleared.";
+});
+
 
     function renderProducts() {
   productsEl.innerHTML = "";
@@ -815,6 +881,8 @@ function getSelectedItems() {
         setTableRows("productTable", prodRows);
         setTableRows("sizeTable", sizeRows);
 
+        await refreshOrdersList();
+
         analyticsStatus.textContent = "Updated.";
       } catch (e) {
         console.error(e);
@@ -824,9 +892,109 @@ function getSelectedItems() {
 
     refreshBtn.addEventListener('click', refreshAnalytics);
 
+    const ordersListStatus = document.getElementById("ordersListStatus");
+
+function escapeHtmlText(s){
+  return String(s || "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+
+function fmtDate(dStr){
+  // dStr may come as ISO string or Date text; keep it simple:
+  try {
+    const d = new Date(dStr);
+    if (isNaN(d.getTime())) return String(dStr || "");
+    return d.toLocaleString();
+  } catch {
+    return String(dStr || "");
+  }
+}
+
+async function refreshOrdersList() {
+  ordersListStatus.textContent = "Loading orders...";
+  try {
+    const out = await postFormUrlEncoded({ action: "listOrders" });
+
+    if (!(out && out.ok)) {
+      ordersListStatus.textContent = "Could not load orders.";
+      console.error(out);
+      return;
+    }
+
+    const rows = out.orders || [];
+    const tbody = document.querySelector("#ordersTable tbody");
+
+    if (!rows.length) {
+      tbody.innerHTML = "";
+      ordersListStatus.textContent = "No orders yet.";
+      return;
+    }
+
+    tbody.innerHTML = rows.map(o => {
+      const orderId = escapeHtmlText(o.orderId);
+      const date = escapeHtmlText(fmtDate(o.createdAt));
+      const name = escapeHtmlText(o.name);
+      const items = escapeHtmlText(o.itemsSummary);
+
+      return `
+        <tr>
+          <td>${date}</td>
+          <td>${name}</td>
+          <td>${items}</td>
+          <td style="text-align:right;">
+            <button class="btn small" data-del="${orderId}" type="button">Remove</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    // bind delete buttons
+    tbody.querySelectorAll("button[data-del]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const orderId = btn.getAttribute("data-del");
+        if (!orderId) return;
+
+        // simple confirm
+        const ok = confirm("Remove this order? This cannot be undone.");
+        if (!ok) return;
+
+        btn.disabled = true;
+        ordersListStatus.textContent = "Removing...";
+
+        try {
+          const delOut = await postFormUrlEncoded({ action: "deleteOrder", orderId });
+
+          if (delOut && delOut.ok) {
+            ordersListStatus.textContent = "Removed.";
+            await refreshAnalytics();
+            await refreshOrdersList();
+          } else {
+            ordersListStatus.textContent = "Error removing order.";
+            console.error(delOut);
+          }
+        } catch (e) {
+          console.error(e);
+          ordersListStatus.textContent = "Error removing order.";
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    ordersListStatus.textContent = `Showing ${rows.length} orders.`;
+  } catch (e) {
+    console.error(e);
+    ordersListStatus.textContent = "Error loading orders.";
+  }
+}
+
+
     // init
-    renderProducts();
-    refreshAnalytics();
+   renderProducts();
+refreshAnalytics();
+refreshOrdersList();
+
   </script>
 </body>
 </html>
