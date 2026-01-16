@@ -426,7 +426,7 @@
           </div>
         </div>
 
-        <div style="margin-top:14px;"
+        <div style="margin-top:14px;">
   <h3 style="margin-bottom:10px;">Products</h3>
 
   <div class="products-grid" id="products"></div>
@@ -479,6 +479,56 @@
             <div class="lab">Total Items</div>
           </div>
         </div>
+
+        <div class="section-heading" style="margin-top: 28px;">
+  <h2 class="section-title">Stock</h2>
+  <p class="section-subtitle">On-hand inventory (starting stock minus sold)</p>
+</div>
+
+<section class="card" id="stockSection">
+  <div class="row" style="justify-content: space-between; align-items:center;">
+    <h3 style="margin:0;">Inventory</h3>
+
+    <div class="row" style="gap:8px;">
+      <button class="btn small" id="stockViewProductBtn" type="button">By Product</button>
+      <button class="btn small" id="stockViewSizeBtn" type="button">By Size</button>
+      <span class="muted" id="stockStatus"></span>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <table class="table" id="stockProductTable" style="display: table;">
+      <thead><tr><th>Product</th><th>On hand</th><th>Sold</th><th>Start</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <table class="table" id="stockSizeTable" style="display: none;">
+      <thead><tr><th>Product</th><th>Size</th><th>On hand</th><th>Sold</th><th>Start</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+    <div class="row" style="gap:8px; margin-top:12px;">
+    <button class="btn small" id="editStockBtn" type="button">Edit Starting Stock</button>
+    <button class="btn small" id="saveStockBtn" type="button" style="display:none;">Save Stock</button>
+    <button class="btn small" id="cancelStockBtn" type="button" style="display:none;">Cancel</button>
+  </div>
+
+  <div id="stockEditor" style="display:none; margin-top:12px;">
+    <p class="muted" style="margin-bottom:10px;">
+      Set START stock per Product × Size. (On hand = Start − Sold)
+    </p>
+
+    <table class="table" id="stockEditTable">
+      <thead>
+        <tr><th>Product</th><th>Size</th><th>Start</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+</section>
+
 
         <div class="grid" style="margin-top: 10px;">
           <div>
@@ -836,6 +886,172 @@ function getSelectedItems() {
       }
     });
 
+    // ---------- STOCK ----------
+const stockStatus = document.getElementById("stockStatus");
+
+const stockViewProductBtn = document.getElementById("stockViewProductBtn");
+const stockViewSizeBtn = document.getElementById("stockViewSizeBtn");
+const stockProductTable = document.getElementById("stockProductTable");
+const stockSizeTable = document.getElementById("stockSizeTable");
+
+const editStockBtn = document.getElementById("editStockBtn");
+const saveStockBtn = document.getElementById("saveStockBtn");
+const cancelStockBtn = document.getElementById("cancelStockBtn");
+const stockEditor = document.getElementById("stockEditor");
+const stockEditTableBody = document.querySelector("#stockEditTable tbody");
+
+// Toggle stock view
+stockViewProductBtn && stockViewProductBtn.addEventListener("click", () => {
+  stockProductTable.style.display = "table";
+  stockSizeTable.style.display = "none";
+});
+
+stockViewSizeBtn && stockViewSizeBtn.addEventListener("click", () => {
+  stockProductTable.style.display = "none";
+  stockSizeTable.style.display = "table";
+});
+
+function setStockRows(tableId, rowsHtml) {
+  document.querySelector(`#${tableId} tbody`).innerHTML = rowsHtml;
+}
+
+async function refreshStock() {
+  stockStatus.textContent = "Loading stock...";
+  try {
+    const out = await postFormUrlEncoded({ action: "getStock" });
+
+    if (!out || !out.ok) {
+      stockStatus.textContent = out?.message || "Stock unavailable.";
+      console.error(out);
+      return;
+    }
+
+    // By Product
+    const prodRows = (out.byProduct || []).map(r => `
+      <tr>
+        <td>${escapeHtmlText(r.product)}</td>
+        <td>${escapeHtmlText(r.onHand)}</td>
+        <td>${escapeHtmlText(r.sold)}</td>
+        <td>${escapeHtmlText(r.start)}</td>
+      </tr>
+    `).join("");
+    setStockRows("stockProductTable", prodRows);
+
+    // By Size
+    const sizeRows = (out.bySize || []).map(r => `
+      <tr>
+        <td>${escapeHtmlText(r.product)}</td>
+        <td>${escapeHtmlText(r.size)}</td>
+        <td>${escapeHtmlText(r.onHand)}</td>
+        <td>${escapeHtmlText(r.sold)}</td>
+        <td>${escapeHtmlText(r.start)}</td>
+      </tr>
+    `).join("");
+    setStockRows("stockSizeTable", sizeRows);
+
+    stockStatus.textContent = "Updated.";
+  } catch (e) {
+    console.error(e);
+    stockStatus.textContent = "Error loading stock.";
+  }
+}
+
+async function openStockEditor() {
+  stockStatus.textContent = "Loading inventory...";
+  try {
+    const inv = await postFormUrlEncoded({ action: "getInventory" });
+
+    if (!inv || !inv.ok) {
+      stockStatus.textContent = inv?.message || "Inventory unavailable.";
+      console.error(inv);
+      return;
+    }
+
+    const saved = new Map(); // product__size -> start
+    (inv.starts || []).forEach(s => saved.set(`${s.product}__${s.size}`, Number(s.start || 0)));
+
+    const rows = [];
+    PRODUCTS.forEach(p => {
+      p.sizes.forEach(sz => {
+        const key = `${p.name}__${sz}`;
+        const val = saved.has(key) ? saved.get(key) : 0;
+
+        rows.push(`
+          <tr>
+            <td>${escapeHtmlText(p.name)}</td>
+            <td>${escapeHtmlText(sz)}</td>
+            <td>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                data-product="${escapeHtmlText(p.name)}"
+                data-size="${escapeHtmlText(sz)}"
+                value="${escapeHtmlText(val)}"
+              />
+            </td>
+          </tr>
+        `);
+      });
+    });
+
+    stockEditTableBody.innerHTML = rows.join("");
+
+    stockEditor.style.display = "block";
+    saveStockBtn.style.display = "inline-block";
+    cancelStockBtn.style.display = "inline-block";
+    editStockBtn.style.display = "none";
+
+    stockStatus.textContent = "Edit starting stock.";
+  } catch (e) {
+    console.error(e);
+    stockStatus.textContent = "Error loading inventory.";
+  }
+}
+
+function closeStockEditor() {
+  stockEditor.style.display = "none";
+  saveStockBtn.style.display = "none";
+  cancelStockBtn.style.display = "none";
+  editStockBtn.style.display = "inline-block";
+}
+
+async function saveStockEditor() {
+  stockStatus.textContent = "Saving...";
+  try {
+    const inputs = Array.from(stockEditTableBody.querySelectorAll("input[type='number']"));
+
+    const entries = inputs.map(inp => ({
+      product: inp.dataset.product,
+      size: inp.dataset.size,
+      start: Number(inp.value || 0)
+    }));
+
+    const out = await postFormUrlEncoded({ action: "setInventory", entries });
+
+    if (!out || !out.ok) {
+      stockStatus.textContent = out?.message || "Save failed.";
+      console.error(out);
+      return;
+    }
+
+    closeStockEditor();
+    stockStatus.textContent = "Saved.";
+    await refreshStock();
+  } catch (e) {
+    console.error(e);
+    stockStatus.textContent = "Error saving stock.";
+  }
+}
+
+editStockBtn && editStockBtn.addEventListener("click", openStockEditor);
+cancelStockBtn && cancelStockBtn.addEventListener("click", () => {
+  closeStockEditor();
+  stockStatus.textContent = "Canceled.";
+});
+saveStockBtn && saveStockBtn.addEventListener("click", saveStockEditor);
+
+
     // ---------- ANALYTICS ----------
     const refreshBtn = document.getElementById('refreshBtn');
     const analyticsStatus = document.getElementById('analyticsStatus');
@@ -870,6 +1086,7 @@ function getSelectedItems() {
         setTableRows("sizeTable", sizeRows);
 
         await refreshOrdersList();
+        await refreshStock();
 
         analyticsStatus.textContent = "Updated.";
       } catch (e) {
@@ -979,10 +1196,11 @@ async function refreshOrdersList() {
 
 
     // init
-   renderProducts();
-refreshAnalytics();
-refreshOrdersList();
-
+  renderProducts();
+  refreshAnalytics();
+  refreshOrdersList();
+  refreshStock();
+    
   </script>
 </body>
 </html>
